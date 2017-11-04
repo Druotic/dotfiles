@@ -1,0 +1,25 @@
+[color "diff"]
+  frag = cyan bold
+  meta = white
+  new = green bold
+  old = red bold
+  commit = yellow bold
+  whitespace = red reverse
+
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
+
+[color "status"]
+  untracked = cyan
+
+[gitsh "color"]
+  default   = blue
+  modified  = red
+  untracked = cyan
+
+[include]
+  path = ~/.gitconfig.local
+
