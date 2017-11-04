@@ -1,5 +1,5 @@
 # hide computer name
-export PS1="\W \$"
+export PS1="\e[48;5;237m \W \$\e[0m "
 
 # nvm environment loading
 export NVM_DIR="/usr/local/opt/nvm"
