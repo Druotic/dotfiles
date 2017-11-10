@@ -12,3 +12,29 @@ export NVM_DIR="/usr/local/opt/nvm"
 # Differentiate files, directories, etc
 export LSCOLORS="EHfxcxdxBxegecabagacad" 
 alias ls='ls -lGH'
+
+# goteem prints out the word "goteem".
+#
+# example:
+#   $ goteem
+#
+#      _|_|_|     _|_|     _|_|_|_|_|   _|_|_|_|   _|_|_|_|   _|      _|
+#    _|         _|    _|       _|       _|         _|         _|_|  _|_|
+#    _|  _|_|   _|    _|       _|       _|_|_|     _|_|_|     _|  _|  _|
+#    _|    _|   _|    _|       _|       _|         _|         _|      _|
+#      _|_|_|     _|_|         _|       _|_|_|_|   _|_|_|_|   _|      _|
+#
+#
+# be warned, if invoked, you may experience nostalgia.
+goteem() {
+  echo "
+
+   _|_|_|     _|_|     _|_|_|_|_|   _|_|_|_|   _|_|_|_|   _|      _|
+ _|         _|    _|       _|       _|         _|         _|_|  _|_|
+ _|  _|_|   _|    _|       _|       _|_|_|     _|_|_|     _|  _|  _|
+ _|    _|   _|    _|       _|       _|         _|         _|      _|
+   _|_|_|     _|_|         _|       _|_|_|_|   _|_|_|_|   _|      _|
+
+"
+}
+
