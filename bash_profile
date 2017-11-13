@@ -7,7 +7,7 @@ export NVM_DIR="/usr/local/opt/nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # use latest LTS version of node, if nvm is installed
-[ -s "$NVM_DIR/nvm.sh ] && nvm use lts/*
+[ -s "$NVM_DIR/nvm.sh" ] && nvm use lts/*
 
 # Differentiate files, directories, etc
 export LSCOLORS="EHfxcxdxBxegecabagacad" 
