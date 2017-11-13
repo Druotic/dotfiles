@@ -10,5 +10,5 @@ export NVM_DIR="/usr/local/opt/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && nvm use lts/*
 
 # Differentiate files, directories, etc
-export LSCOLORS="EHfxcxdxBxegecabagacad" 
+export LSCOLORS="GxfxcxdxBxegecabagacad"
 alias ls='ls -lGH'
