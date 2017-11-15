@@ -1,5 +1,4 @@
 # This script is for installing dotfiles. `file` will be placed in `~/.file`
-
 set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
