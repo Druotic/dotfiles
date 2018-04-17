@@ -12,9 +12,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'joshdick/onedark.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'mhinz/vim-signify'
+Plug 'iamcco/mathjax-support-for-mkdp'
+Plug 'iamcco/markdown-preview.vim'
+Plug 'scrooloose/nerdcommenter'
 
 " Initialize plugin system
 call plug#end()
+
 
 " soft tabs, 2 spaces, show line numbers
 set tabstop=2
@@ -33,6 +37,7 @@ set backspace=indent,eol,start
 "set list
 "set listchars=eol:,tab:>-,trail:~,extends:>,precedes:<
 
+
 " onedark coloring
 syntax on
 colorscheme onedark
@@ -46,6 +51,10 @@ map <c-p> :FZF <enter>
 " file tree
 map <c-n> :NERDTreeToggle <enter>
 
+" leader maps
+let mapleader = ','
+nmap <leader>m <Plug>MarkdownPreview
+
 " Use silver searcher with ack/fzf
 let g:ackprg = 'ag --vimgrep'
 let $FZF_DEFAULT_COMMAND = 'ag -g ""'
@@ -56,9 +65,12 @@ let g:move_key_modifier = 'c'
 let NERDTreeRespectWildIgnore = 1
 let NERDTreeShowHidden = 1
 
+" open markdown preview in chrome
+let g:mkdp_path_to_chrome = "open -a Google\\ Chrome"
+
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
-let globalIgnore = '~/.gitignore'
+let globalIgnore = '/Users/druotic/.gitignore'
 if filereadable(globalIgnore)
     let igstring = ''
     for oline in readfile(globalIgnore)
@@ -66,9 +78,16 @@ if filereadable(globalIgnore)
         if line =~ '^#' | con | endif
         if line == '' | con  | endif
         if line =~ '^!' | con  | endif
-        if line =~ '/$' | let igstring .= "," . line . "*" | con | endif
+        " strip trailing / for directories so that they are correctly ignored
+        if line =~ '/$' | let igstring .= "," . substitute(line, '/$', '', '') | con | endif
         let igstring .= "," . line
     endfor
     let execstring = "set wildignore=".substitute(igstring, '^,', '', "g")
     execute execstring
 endif
+
+set clipboard=unnamed
+
+" highlight character beyond 80 character column
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
