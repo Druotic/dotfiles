@@ -15,6 +15,8 @@ Plug 'mhinz/vim-signify'
 Plug 'iamcco/mathjax-support-for-mkdp'
 Plug 'iamcco/markdown-preview.vim'
 Plug 'scrooloose/nerdcommenter'
+Plug 'heavenshell/vim-jsdoc'
+
 
 " Initialize plugin system
 call plug#end()
@@ -54,6 +56,7 @@ map <c-n> :NERDTreeToggle <enter>
 " leader maps
 let mapleader = ','
 nmap <leader>m <Plug>MarkdownPreview
+nmap <leader>j <Plug>(jsdoc)
 
 " Use silver searcher with ack/fzf
 let g:ackprg = 'ag --vimgrep'
