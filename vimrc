@@ -71,6 +71,10 @@ let NERDTreeShowHidden = 1
 " open markdown preview in chrome
 let g:mkdp_path_to_chrome = "open -a Google\\ Chrome"
 
+" vim-jsdoc
+let g:jsdoc_allow_input_prompt = 1
+let g:jsdoc_input_description = 1
+
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
 let globalIgnore = '/Users/druotic/.gitignore'
