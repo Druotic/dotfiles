@@ -16,18 +16,21 @@ Plug 'iamcco/mathjax-support-for-mkdp'
 Plug 'iamcco/markdown-preview.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'heavenshell/vim-jsdoc'
+Plug 'udalov/kotlin-vim'
+Plug 'scrooloose/syntastic'
 
 
 " Initialize plugin system
 call plug#end()
 
 
-" soft tabs, 2 spaces, show line numbers
+" soft tabs, 2 spaces, show line numbers, 80 width col
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 set expandtab
 set number
+set colorcolumn=80
 
 " cursor line highlighting
 set cursorline
@@ -39,9 +42,18 @@ set backspace=indent,eol,start
 "set list
 "set listchars=eol:,tab:>-,trail:~,extends:>,precedes:<
 
+" polyglot, syntax highlighting on
+syntax on
+let g:syntastic_jsx_checkers = ['eslint']
+let g:syntastic_jsx_eslint_exe = '$(yarn bin)/eslint'
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
+let g:syntastic_json_checkers = ['jsonlint']
+let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
+let g:syntastic_typescript_checkers = ['tslint']
+let g:syntastic_typescript_tslint_exe = '$(yarn bin)/tslint'
 
 " onedark coloring
-syntax on
 colorscheme onedark
 
 set wildignore+=*/package-lock.json
@@ -52,11 +64,14 @@ map <c-f> :Ack
 map <c-p> :FZF <enter>
 " file tree
 map <c-n> :NERDTreeToggle <enter>
+nmap <leader>n :NERDTreeFind <enter>
 
 " leader maps
 let mapleader = ','
 nmap <leader>m <Plug>MarkdownPreview
 nmap <leader>j <Plug>(jsdoc)
+nmap <leader>s :SyntasticCheck <enter>
+nmap <leader>sd :SyntasticReset <enter>
 
 " Use silver searcher with ack/fzf
 let g:ackprg = 'ag --vimgrep'
@@ -98,3 +113,17 @@ set clipboard=unnamed
 " highlight character beyond 80 character column
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
+
+" syntastic defaults
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+
+"fuck you and your slow syntax checkinglet
+let g:syntastic_mode_map = { 'mode': 'passive',
+                            \ 'active_filetypes': [],
+                            \ 'passive_filetypes': [] }
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0

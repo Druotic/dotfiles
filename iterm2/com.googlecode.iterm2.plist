@@ -360,6 +360,8 @@
 	<string>660814AD-B47E-4A11-8AEB-BD695DCE4214</string>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
+	<key>IRMemory</key>
+	<integer>20</integer>
 	<key>LoadPrefsFromCustomFolder</key>
 	<true/>
 	<key>NSNavLastRootDirectory</key>
@@ -405,13 +407,13 @@
 		<integer>1</integer>
 	</dict>
 	<key>NSWindow Frame SUUpdateAlert</key>
-	<string>2650 378 620 392 1680 -390 2560 1417 </string>
+	<string>970 786 620 392 0 0 2560 1440 </string>
 	<key>NSWindow Frame SessionsPreferences</key>
-	<string>843 490 606 469 0 0 1680 1027 </string>
+	<string>1534 853 606 469 0 0 2560 1440 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>1359 897 918 512 0 0 2560 1417 </string>
+	<string>681 549 796 473 0 0 1680 1050 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>390 0 1277 1027 0 0 1920 1080 </string>
+	<string>0 0 1680 1027 0 0 1680 1050 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>212 101 585 452 0 0 1680 1050 </string>
 	<key>New Bookmarks</key>
@@ -1187,6 +1189,10 @@
 			<string>/Users/druotic</string>
 		</dict>
 	</array>
+	<key>NoSyncHaveUsedCopyMode</key>
+	<true/>
+	<key>NoSyncHaveWarnedAboutIncompatibleSoftware</key>
+	<true/>
 	<key>NoSyncHaveWarnedAboutPasteConfirmationChange</key>
 	<true/>
 	<key>NoSyncInstallationId</key>
@@ -1249,11 +1255,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-01-18T21:23:32Z</date>
+	<date>2018-07-21T06:37:03Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SUSkippedVersion</key>
-	<string>3.1.5</string>
+	<string>3.1.7</string>
 	<key>TabStyle</key>
 	<integer>0</integer>
 	<key>TabViewType</key>
@@ -1263,7 +1269,7 @@
 	<key>findMode_iTerm</key>
 	<integer>0</integer>
 	<key>iTerm Version</key>
-	<string>3.1.4</string>
+	<string>3.1.5</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>2</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>

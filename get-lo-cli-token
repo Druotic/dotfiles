@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+const Configstore = require('configstore');
+const conf = new Configstore('lifeomic-cli');
+const config = conf.get('dev');
+process.stdout.write(config.tokens.accessToken);
+
