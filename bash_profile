@@ -44,6 +44,7 @@ alias ds='docker stop $(docker ps -aq)'
 alias untgz='tar -xvzf'
 
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
+alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
 # goteem prints out the word "goteem".
 #
