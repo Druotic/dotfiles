@@ -64,10 +64,10 @@ map <c-f> :Ack
 map <c-p> :FZF <enter>
 " file tree
 map <c-n> :NERDTreeToggle <enter>
-nmap <leader>n :NERDTreeFind <enter>
 
 " leader maps
 let mapleader = ','
+nmap <leader>n :NERDTreeFind <enter>
 nmap <leader>m <Plug>MarkdownPreview
 nmap <leader>j <Plug>(jsdoc)
 nmap <leader>s :SyntasticCheck <enter>

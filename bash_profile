@@ -1,4 +1,4 @@
-# visually breaks prompt sometimes right now
+#visually breaks prompt sometimes right now
 #export PS1="\[\e[48;5;237m \W \$\e[0m \]"
 # hide computer name
 
@@ -33,18 +33,43 @@ alias cdp='cd ~/repos/public'
 alias aws-dev='aws --profile lifeomic-dev'
 alias aws-test='aws --profile lifeomic-test'
 alias aws-infra='aws --profile lifeomic-infra'
+alias aws-prod='aws --profile lifeomic-prod-us'
 
 alias assume-admin='source ~/.config/assumeAdminDev'
+alias assume-admin-prod='source ~/.config/assumeAdminProd'
+alias assume-admin-j1-dev='source ~/.config/assumeAdminJ1Dev'
 
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
+alias git-rm-remote-tag="git push --delete origin"
 
 alias rn='react-native'
 
-alias ds='docker stop $(docker ps -aq)'
+alias ds='docker stop -t 3 $(docker ps -aq)'
 alias untgz='tar -xvzf'
 
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
+
+alias mobile-deployments="lifeomic-deployment-dashboard --service notification-service life-service social-circle-service file-service user-service graphql-proxy-service life-monitor life-social-queries-service provision-life"
+
+# Repeat command ($2) $1 times, exit early if failure
+repeat-it () {
+  RE='^[0-9]+$' 
+  COUNT=$1
+  if ! [[ $COUNT =~ $RE ]] ; then
+    echo "First arg must be a number, found '$COUNT'"
+    return 1
+  fi
+  shift
+  echo "Executing the following command $COUNT times: '$@'"
+  for i in 1 .. $COUNT; do $@ || return ; done
+}
+
+# $1 - ag basic search pattern, $2 - sed expression
+# recursively replaces file contents
+superSed () {
+  ag -l "$1" . | xargs sed -i '' -E "$2"
+}
 
 # goteem prints out the word "goteem".
 #
@@ -71,6 +96,8 @@ goteem() {
 "
 }
 
+# disable per-session splitting of history, use single file
+export SHELL_SESSION_HISTORY=0
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="~/.rbenv/shims:$PATH"
 #export PATH=$PATH:/Users/druotic/.gem/ruby/2.5.0/bin
@@ -81,6 +108,5 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-
 # workaround for using java 10 w/ android sdks (only supports 8 by default :()
 #export JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'

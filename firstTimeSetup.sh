@@ -13,6 +13,7 @@ set -e
 # shiftit - windowing
 brew cask install shiftit
 brew cask install google-chrome
+brew install gawk
 brew install the_silver_searcher
 
 # Nvm, node lts
