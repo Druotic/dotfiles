@@ -62,7 +62,7 @@ repeat-it () {
   fi
   shift
   echo "Executing the following command $COUNT times: '$@'"
-  for i in 1 .. $COUNT; do $@ || return ; done
+  for i in `seq 1 $COUNT`; do $@ || return ; done
 }
 
 # $1 - ag basic search pattern, $2 - sed expression
