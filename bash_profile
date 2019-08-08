@@ -9,10 +9,13 @@ initNvm () {
   source $NVM_DIR/bash_completion
 }
 
-alias loadnvm='loadnvm8'
+alias loadnvm='loadnvm10'
 
 # nvm environment loading
 alias loadnvm8='initNvm; nvm use 8'
+alias loadnvm10='initNvm; nvm use 10'
+
+loadnvm8
 
 #source ~/.nvm/nvm.sh; source ~/.nvm/'
 #export NVM_DIR="/usr/local/opt/nvm"
@@ -28,6 +31,7 @@ alias ls='ls -lGH'
 
 alias cdw='cd ~/repos/public/windbreaker-deploy/repos'
 alias cdl='cd ~/repos/lifeomic'
+alias cdc='cd ~/repos/lifeomic-clone'
 alias cdp='cd ~/repos/public'
 
 alias aws-dev='aws --profile lifeomic-dev'
@@ -36,13 +40,17 @@ alias aws-infra='aws --profile lifeomic-infra'
 alias aws-prod='aws --profile lifeomic-prod-us'
 
 alias assume-admin='source ~/.config/assumeAdminDev'
+alias assume-admin-infra='source ~/.config/assumeAdminInfra'
 alias assume-admin-prod='source ~/.config/assumeAdminProd'
 alias assume-admin-j1-dev='source ~/.config/assumeAdminJ1Dev'
 
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias git-rm-remote-tag="git push --delete origin"
 
+alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
+
 alias rn='react-native'
+#alias vim='nvim'
 
 alias ds='docker stop -t 3 $(docker ps -aq)'
 alias untgz='tar -xvzf'
@@ -69,6 +77,14 @@ repeat-it () {
 # recursively replaces file contents
 superSed () {
   ag -l "$1" . | xargs sed -i '' -E "$2"
+}
+
+reCloneLORepos () {
+  #loadnvm8
+  rm -rf ~/repos/lifeomic-clone
+  local key=$(security find-generic-password -l bitbucket_oauth_consumer_key -w)
+  local secret=$(security find-generic-password -l bitbucket_oauth_consumer_secret -w)
+  lifeomic-clone-repos -t ~/repos/lifeomic-clone -k $key -s $secret
 }
 
 # goteem prints out the word "goteem".
@@ -100,6 +116,10 @@ goteem() {
 export SHELL_SESSION_HISTORY=0
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="~/.rbenv/shims:$PATH"
+
+
+# Mobile Stuff
+
 #export PATH=$PATH:/Users/druotic/.gem/ruby/2.5.0/bin
 # re-enable for non-android studio route
 #export ANDROID_HOME=/opt/android
@@ -110,3 +130,10 @@ export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 # workaround for using java 10 w/ android sdks (only supports 8 by default :()
 #export JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
+
+#export ANDROID_DEVICE=Pixel_2_API_28
+
+json_escape () {
+    printf '%s' "$1" | node 
+    printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}

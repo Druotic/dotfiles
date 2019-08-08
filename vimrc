@@ -17,8 +17,9 @@ Plug 'iamcco/markdown-preview.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'heavenshell/vim-jsdoc'
 Plug 'udalov/kotlin-vim'
-Plug 'scrooloose/syntastic'
-
+" Note: extensions are auto updated and initial install is in install.sh
+" auto update isn't support for in-line Plug based install :(
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Initialize plugin system
 call plug#end()
@@ -37,21 +38,49 @@ set cursorline
 " backspace works across lines and between edit - less flipping between
 " insert/normal
 set backspace=indent,eol,start
+" polyglot/coc, syntax highlighting
+syntax on
+
+" --- begin COC config ---
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=2
+set updatetime=300
+set shortmess+=c
+set signcolumn=yes
+
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+nmap <leader>rn <Plug>(coc-rename)
+" --- end COC config ---
+
+set wildmode=longest,list,full
+set wildmenu
 
 " show all other types of whitespace besides plain space
 "set list
 "set listchars=eol:,tab:>-,trail:~,extends:>,precedes:<
 
 " polyglot, syntax highlighting on
-syntax on
-let g:syntastic_jsx_checkers = ['eslint']
-let g:syntastic_jsx_eslint_exe = '$(yarn bin)/eslint'
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
-let g:syntastic_json_checkers = ['jsonlint']
-let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
-let g:syntastic_typescript_checkers = ['tslint']
-let g:syntastic_typescript_tslint_exe = '$(yarn bin)/tslint'
+"syntax on
+"let g:syntastic_jsx_checkers = ['eslint']
+"let g:syntastic_jsx_eslint_exe = '$(yarn bin)/eslint'
+"let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
+"let g:syntastic_json_checkers = ['jsonlint']
+"let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
+"let g:syntastic_typescript_checkers = ['tslint']
+"let g:syntastic_typescript_tslint_exe = '$(yarn bin)/tslint'
 
 " onedark coloring
 colorscheme onedark
@@ -70,8 +99,8 @@ let mapleader = ','
 nmap <leader>n :NERDTreeFind <enter>
 nmap <leader>m <Plug>MarkdownPreview
 nmap <leader>j <Plug>(jsdoc)
-nmap <leader>s :SyntasticCheck <enter>
-nmap <leader>sd :SyntasticReset <enter>
+"nmap <leader>s :SyntasticCheck <enter>
+"nmap <leader>sd :SyntasticReset <enter>
 
 " Use silver searcher with ack/fzf
 let g:ackprg = 'ag --vimgrep'
@@ -85,6 +114,9 @@ let NERDTreeShowHidden = 1
 
 " open markdown preview in chrome
 let g:mkdp_path_to_chrome = "open -a Google\\ Chrome"
+
+" working dir = nearest dir w/ .git
+let g:ctrlp_working_path_mode='r'
 
 " vim-jsdoc
 let g:jsdoc_allow_input_prompt = 1
@@ -115,15 +147,15 @@ highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
 
 " syntastic defaults
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
 
-"fuck you and your slow syntax checkinglet
-let g:syntastic_mode_map = { 'mode': 'passive',
-                            \ 'active_filetypes': [],
-                            \ 'passive_filetypes': [] }
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
+""fuck you and your slow syntax checkinglet
+"let g:syntastic_mode_map = { 'mode': 'passive',
+                            "\ 'active_filetypes': [],
+                            "\ 'passive_filetypes': [] }
+"let g:syntastic_check_on_open = 0
+"let g:syntastic_check_on_wq = 0
