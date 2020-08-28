@@ -13,7 +13,7 @@ Plug 'joshdick/onedark.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'mhinz/vim-signify'
 Plug 'iamcco/mathjax-support-for-mkdp'
-Plug 'iamcco/markdown-preview.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'scrooloose/nerdcommenter'
 Plug 'heavenshell/vim-jsdoc'
 Plug 'udalov/kotlin-vim'
@@ -49,6 +49,9 @@ set cmdheight=2
 set updatetime=300
 set shortmess+=c
 set signcolumn=yes
+
+" use new window/buffer, split vertically (e.g. ack, fzf, but NOT nerdtree)
+set switchbuf=vsplit
 
 inoremap <silent><expr> <c-space> coc#refresh()
 
@@ -88,9 +91,10 @@ colorscheme onedark
 set wildignore+=*/package-lock.json
 
 " search for text globally
-map <c-f> :Ack 
+map <c-f> :Ack! 
 " fuzzy search for files
 map <c-p> :FZF <enter>
+"map <c-p> :call fzf#run({ 'source': 'ag -g ""', 'sink': 'e', 'window': 'enew' }) <enter>
 " file tree
 map <c-n> :NERDTreeToggle <enter>
 

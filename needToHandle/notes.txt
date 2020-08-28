@@ -1,0 +1,2 @@
+* coc-settings.json goes in ~/.config/nvim/coc-settings.json
+* .bash_profile_work - have to add this after setting up bash_profile

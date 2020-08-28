@@ -20,12 +20,16 @@
   modified  = red
   untracked = cyan
 
-[include]
-  path = ~/.gitconfig.local
-
 [core]
   excludesfile = ~/.gitignore
 [push]
-	default = current
+  default = current
+
 [user]
-	email = james.beavers@lifeomic.com
+  user = Druotic
+  name = James Beavers
+  email = jamesjbeavers@gmail.com
+
+# Work specific config that's not sensitive
+[includeIf "gitdir:~/repos/work"]
+  path = .gitconfig-lifeomic

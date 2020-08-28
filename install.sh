@@ -59,9 +59,11 @@ echo "Installing nvim CoC extensions"
 # Also, this hangs at the end :(
 nvim --headless -c "$(cat <<EOF
 :CocInstall \
-coc-json \
 coc-tsserver \
+coc-json \
 coc-html \
+coc-yaml \
+coc-css \
 coc-python \
 coc-jest \
 coc-tslint-plugin \
