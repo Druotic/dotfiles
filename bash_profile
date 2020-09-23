@@ -30,6 +30,10 @@ alias untgz='tar -xvzf'
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
+# GPG signing of commits - necessary for GPG to open passphrase prompt during
+# signing
+export GPG_TTY="$(tty)"
+
 unlinkPackage () {
   echo "Unlinking $1..."
   pushd ~/.config/yarn/link/$1
@@ -167,6 +171,7 @@ EOF
 
 }
 alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
+alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 
 # For aws-sdk to work with configured profiles. Override AWS_PROFILE for
 # per-env/role profiles (lifeomic-prod-admin, lifeomic-prod-support, etc)

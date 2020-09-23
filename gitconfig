@@ -22,8 +22,13 @@
 
 [core]
   excludesfile = ~/.gitignore
+	ignorecase = false
+
 [push]
   default = current
+[pull]
+  # forced to add this after git upgrade to avoid warnings (this is the default)
+  rebase = false
 
 [user]
   user = Druotic
@@ -31,5 +36,5 @@
   email = jamesjbeavers@gmail.com
 
 # Work specific config that's not sensitive
-[includeIf "gitdir:~/repos/work"]
+[includeIf "gitdir:~/repos/work/"]
   path = .gitconfig-lifeomic

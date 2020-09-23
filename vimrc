@@ -2,7 +2,8 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'editorconfig/editorconfig-vim'
-Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'
+Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
@@ -91,9 +92,10 @@ colorscheme onedark
 set wildignore+=*/package-lock.json
 
 " search for text globally
-map <c-f> :Ack! 
+map <c-f> :Grepper<Enter>
+" :Ack! 
 " fuzzy search for files
-map <c-p> :FZF <enter>
+map <c-p> :Files<CR>
 "map <c-p> :call fzf#run({ 'source': 'ag -g ""', 'sink': 'e', 'window': 'enew' }) <enter>
 " file tree
 map <c-n> :NERDTreeToggle <enter>
@@ -107,8 +109,8 @@ nmap <leader>j <Plug>(jsdoc)
 "nmap <leader>sd :SyntasticReset <enter>
 
 " Use silver searcher with ack/fzf
-let g:ackprg = 'ag --vimgrep'
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let g:grepper = { 'tools': ['rg'] }
+let $FZF_DEFAULT_COMMAND = 'rg --files'
 
 " vim-move ctrl+j, ctrl+k to move line
 let g:move_key_modifier = 'c'
@@ -157,7 +159,7 @@ match OverLength /\%81v.\+/
 "let g:syntastic_always_populate_loc_list = 1
 "let g:syntastic_auto_loc_list = 1
 
-""fuck you and your slow syntax checkinglet
+"slow syntax checking
 "let g:syntastic_mode_map = { 'mode': 'passive',
                             "\ 'active_filetypes': [],
                             "\ 'passive_filetypes': [] }
