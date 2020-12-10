@@ -128,6 +128,12 @@ let g:ctrlp_working_path_mode='r'
 let g:jsdoc_allow_input_prompt = 1
 let g:jsdoc_input_description = 1
 
+" https://github.com/vim-airline/vim-airline/blob/master/doc/airline.txt#L392
+" Show parent of parent directory name up to 20 chars. E.g. 'lifeomic',
+" 'lifeomic-clone', etc to make working with multiple copies of the same project
+" in parallel easier.
+let g:airline_section_b = '%-0.20{fnamemodify(getcwd(), ":h:t")}'
+
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
 let globalIgnore = '/Users/druotic/.gitignore'
