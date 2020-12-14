@@ -132,7 +132,9 @@ let g:jsdoc_input_description = 1
 " Show parent of parent directory name up to 20 chars. E.g. 'lifeomic',
 " 'lifeomic-clone', etc to make working with multiple copies of the same project
 " in parallel easier.
-let g:airline_section_b = '%-0.20{fnamemodify(getcwd(), ":h:t")}'
+"let g:airline_section_b = '%-0.20{fnamemodify(getcwd(), ":h:t")}'
+" update: relative to root - e.g. /Users/druotic/repos/work/lifeomic/...
+let g:airline_section_b = '%-0.20{split(getcwd(), "/")[4]}'
 
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
