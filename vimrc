@@ -73,7 +73,7 @@ set wildmenu
 
 " show all other types of whitespace besides plain space
 "set list
-"set listchars=eol:,tab:>-,trail:~,extends:>,precedes:<
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 
 " polyglot, syntax highlighting on
 "syntax on

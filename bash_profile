@@ -132,12 +132,12 @@ port_in_use () {
 
 ### LifeOmic specific ###
 
-reCloneLORepos () {
-  rm -rf ~/repos/work/lifeomic-clone
-  local key=$(security find-generic-password -l bitbucket_oauth_consumer_key -w)
-  local secret=$(security find-generic-password -l bitbucket_oauth_consumer_secret -w)
-  lifeomic-clone-repos -t ~/repos/work/lifeomic-clone -k $key -s $secret
-}
+#reCloneLORepos () {
+  #rm -rf ~/repos/work/lifeomic-clone
+  #local key=$(security find-generic-password -l bitbucket_oauth_consumer_key -w)
+  #local secret=$(security find-generic-password -l bitbucket_oauth_consumer_secret -w)
+  #lifeomic-clone-repos -t ~/repos/work/lifeomic-clone -k $key -s $secret
+#}
 
 alias cdl='cd ~/repos/work/lifeomic'
 alias cdc='cd ~/repos/work/lifeomic-clone'
@@ -173,15 +173,19 @@ EOF
 alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 
+# Note: org repo listing type=all is busted and only returns public. Have to separately specify internal/public to get everything
+lifeomic_clone_repos_gh () { [ -z "$GITHUB_PAT" ] && echo "Must provide GITHUB_PAT" || for type in internal public; do for page in {1..99999}; do URLS=$(curl -s -H "Authorization: token ${GITHUB_PAT}" "https://api.github.com/orgs/lifeomic/repos?per_page=100&page=$page&type=$type" | jq -r ".[].clone_url"); [ -z "$URLS" ] && echo "Done processing $type repositories." && break || for repo in $URLS; do git clone "$repo" 2>&1 | head; done; done; done }
+
 # For aws-sdk to work with configured profiles. Override AWS_PROFILE for
 # per-env/role profiles (lifeomic-prod-admin, lifeomic-prod-support, etc)
 # Note: privileged roles like Support require re-login w/ CLI using different
 # lifeomic-master source role
-export AWS_SDK_LOAD_CONFIG=true
-export AWS_PROFILE=lifeomic-dev
-export AWS_DEFAULT_PROFILE=lifeomic-dev
-export LIFEOMIC_TARGET_ENVIRONMENT=lifeomic-dev
-export AWS_REGION=us-east-1
+#export AWS_SDK_LOAD_CONFIG=true
+#export AWS_PROFILE=lifeomic-dev
+#export AWS_DEFAULT_PROFILE=lifeomic-dev
+#export LIFEOMIC_TARGET_ENVIRONMENT=lifeomic-dev
+#export AWS_REGION=us-east-1
+export LIFEOMIC_LOGIN_USERNAME=james.beavers
 
 # Mobile Stuff
 

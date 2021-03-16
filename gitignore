@@ -75,3 +75,5 @@ tags
 # alpine linux uses ash shell (alpine docker images)
 .ash_history
 dist/
+
+.local_only/
