@@ -154,7 +154,7 @@ if filereadable(globalIgnore)
     execute execstring
 endif
 
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 " highlight character beyond 80 character column
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929

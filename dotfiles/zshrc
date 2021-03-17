@@ -1,20 +1,23 @@
 #visually breaks prompt sometimes right now
 #export PS1="\[\e[48;5;237m \W \$\e[0m \]"
+#export PS1='$USER@$(hostname):$(basename $PWD)$ '
+#export PS1="\[\033[0;35m\]\h\[\033[0;33m\] \w\[\033[00m\]: ???"
 # hide computer name
 
-initNvm () {
-  echo "initializing nvm"
-  export NVM_DIR="/usr/local/opt/nvm"
-  source $NVM_DIR/nvm.sh
-  source $NVM_DIR/bash_completion
-  nvm use 12
-}
-
-initNvm
-
 # Differentiate files, directories, etc
-export LSCOLORS="GxfxcxdxBxegecabagacad"
-alias ls='ls -lGH'
+# OSX/BSD
+#export LSCOLORS="GxfxcxdxBxegecabagacad"
+# Linux
+export LS_COLORS="di=1;36:ln=35:so=32:pi=33:ex=1;31:bd=34;46:cd=34;42:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+alias ls='ls -lGH --color=auto'
+
+# Zsh to use the same colors as ls
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
+
+# OSX-isms to make OSX-centric instructions less painful to work around
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+alias open='xdg-open'
 
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias git-rm-remote-tag="git push --delete origin"
@@ -30,9 +33,14 @@ alias untgz='tar -xvzf'
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
-# GPG signing of commits - necessary for GPG to open passphrase prompt during
-# signing
-export GPG_TTY="$(tty)"
+alias cdl='cd ~/repos/work/lifeomic'
+alias cdc='cd ~/repos/work/lifeomic-clone'
+alias cdc2='cd ~/repos/work/lifeomic-clone-2'
+# needs to be same depth as cdl... but otherwise, naming is kinda useless/deep
+alias cdp='cd ~/repos/other/misc'
+alias cdl='cd ~/repos/work/lifeomic'
+alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
+alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 
 unlinkPackage () {
   echo "Unlinking $1..."
@@ -85,36 +93,6 @@ superSed () {
   ag -l "$1" . | xargs sed -i '' -E "$2"
 }
 
-# goteem prints out the word "goteem".
-#
-# example:
-#   $ goteem
-#
-#      _|_|_|     _|_|     _|_|_|_|_|   _|_|_|_|   _|_|_|_|   _|      _|
-#    _|         _|    _|       _|       _|         _|         _|_|  _|_|
-#    _|  _|_|   _|    _|       _|       _|_|_|     _|_|_|     _|  _|  _|
-#    _|    _|   _|    _|       _|       _|         _|         _|      _|
-#      _|_|_|     _|_|         _|       _|_|_|_|   _|_|_|_|   _|      _|
-#
-#
-# be warned, if invoked, you may experience nostalgia.
-goteem() {
-  echo "
-
-   _|_|_|     _|_|     _|_|_|_|_|   _|_|_|_|   _|_|_|_|   _|      _|
- _|         _|    _|       _|       _|         _|         _|_|  _|_|
- _|  _|_|   _|    _|       _|       _|_|_|     _|_|_|     _|  _|  _|
- _|    _|   _|    _|       _|       _|         _|         _|      _|
-   _|_|_|     _|_|         _|       _|_|_|_|   _|_|_|_|   _|      _|
-
-"
-}
-
-# disable per-session splitting of history, use single file
-export SHELL_SESSION_HISTORY=0
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-eval "$(rbenv init -)"
-
 json_escape () {
     printf '%s' "$1" | node 
     printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
@@ -139,11 +117,6 @@ port_in_use () {
   #lifeomic-clone-repos -t ~/repos/work/lifeomic-clone -k $key -s $secret
 #}
 
-alias cdl='cd ~/repos/work/lifeomic'
-alias cdc='cd ~/repos/work/lifeomic-clone'
-alias cdc2='cd ~/repos/work/lifeomic-clone-2'
-alias cdp='cd ~/repos/public'
-alias cdl='cd ~/repos/work/lifeomic'
 
 wellness_deployment_dashboard () {
   lifeomic-deployment-dashboard --service << EOF \
@@ -170,34 +143,28 @@ provision-life
 EOF
 
 }
-alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
-alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 
 # Note: org repo listing type=all is busted and only returns public. Have to separately specify internal/public to get everything
 lifeomic_clone_repos_gh () { [ -z "$GITHUB_PAT" ] && echo "Must provide GITHUB_PAT" || for type in internal public; do for page in {1..99999}; do URLS=$(curl -s -H "Authorization: token ${GITHUB_PAT}" "https://api.github.com/orgs/lifeomic/repos?per_page=100&page=$page&type=$type" | jq -r ".[].clone_url"); [ -z "$URLS" ] && echo "Done processing $type repositories." && break || for repo in $URLS; do git clone "$repo" 2>&1 | head; done; done; done }
 
-# For aws-sdk to work with configured profiles. Override AWS_PROFILE for
-# per-env/role profiles (lifeomic-prod-admin, lifeomic-prod-support, etc)
-# Note: privileged roles like Support require re-login w/ CLI using different
-# lifeomic-master source role
-#export AWS_SDK_LOAD_CONFIG=true
-#export AWS_PROFILE=lifeomic-dev
-#export AWS_DEFAULT_PROFILE=lifeomic-dev
-#export LIFEOMIC_TARGET_ENVIRONMENT=lifeomic-dev
-#export AWS_REGION=us-east-1
-export LIFEOMIC_LOGIN_USERNAME=james.beavers
+# Appends every command to the history file once it is executed
+setopt inc_append_history
+# Reloads the history whenever you use it
+setopt share_history
 
-# Mobile Stuff
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-export BITRISEIO_ANDROID_KEYSTORE_ALIAS='e2eFakeKeystore'
-export BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD='Password'
-export BITRISEIO_ANDROID_KEYSTORE_PASSWORD='Password'
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+source <(lifeomic-aws -v partition commercial)
+LIFEOMIC_LOGIN_USERNAME=james.beavers
+LIFEOMIC_LOGIN_MFA=push
+export LIFEOMIC_LOGIN_USERNAME LIFEOMIC_LOGIN_MFA
 
-### End LifeOmic Specific ###
+#History
+setopt hist_ignore_all_dups inc_append_history
+HISTFILE=~/.zhistory
+HISTSIZE=10000
+SAVEHIST=10000
