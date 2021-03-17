@@ -1,6 +1,8 @@
 [user]
+  user = jjbeavers-lifeomic
+  name = James Beavers
   email = james.beavers@lifeomic.com
-  signingkey = 1CAF4C09
+  signingkey = 94476567
 [commit]
   gpgsign = true
 [tag]

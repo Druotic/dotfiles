@@ -26,15 +26,17 @@
 
 [push]
   default = current
+  followTags = true
 [pull]
   # forced to add this after git upgrade to avoid warnings (this is the default)
   rebase = false
 
-[user]
-  user = Druotic
-  name = James Beavers
-  email = jamesjbeavers@gmail.com
+;[user]
+  ;user = Druotic
+  ;name = James Beavers
+  ;email = jamesjbeavers@gmail.com
 
-# Work specific config that's not sensitive
-[includeIf "gitdir:~/repos/work/"]
+;[includeIf "gitdir:~/repos/work/"]
+# Work specific config that's not sensitive. Use top level
+[includeIf "gitdir:~/repos/"]
   path = .gitconfig-lifeomic

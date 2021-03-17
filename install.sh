@@ -1,25 +1,30 @@
 # This script is for installing dotfiles. `file` will be placed in `~/.file`
 set -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "$(realpath $0)" )" && pwd )"
 
 echo "Linking dotfiles"
-for file in $(ls -p | grep -vE "install.sh|README.md|Brewfile|scripts"); do
+for file in $(ls -p ./dotfiles/*); do
   # strip trailing / from dirs for linking
-  file="$(basename $file)"
-  echo "Linking ~/.$file --> $DIR/$file"
-  ln -nfs $DIR/$file ~/.$file
+  absfile="$(realpath $file)"
+  basefile="$(basename $absfile)"
+  dirfile="$(dirname $absfile)"
+  echo "Linking ~/.$basefile --> $absfile"
+  ln -nfs $absfile ~/.$basefile
 done
 
 echo ""
 echo "Linking scripts"
-pushd scripts/
-for file in $(ls -p); do
-  file="$(basename $file)"
-  echo "Linking /usr/local/bin/$file --> $DIR/scripts/$file"
-  ln -nfs $DIR/scripts/$file /usr/local/bin/$file
+for file in $(ls -p ./scripts/*); do
+  absfile="$(realpath $file)"
+  basefile="$(basename $absfile)"
+  dirfile="$(dirname $absfile)"
+  echo "Linking $HOME/.local/bin/$basefile --> $absfile"
+  ln -nfs $absfile "$HOME/.local/bin/$basefile"
 done
-popd
+
+ln -nfs "$(realpath ./other/kitty/theme.conf)" "$HOME/.config/kitty/theme.conf"
+ln -nfs "$(realpath ./other/kitty/kitty.conf)" "$HOME/.config/kitty/kitty.conf"
 
 # neovim - use shared vimrc and runtime paths
 echo "Setting up init.vim to use shared vim config"
@@ -30,13 +35,13 @@ let &packpath=&runtimepath
 source ~/.vimrc
 EOF
 
-function first_time_setup () {
-  brew bundle
+first_time_setup () {
+  #brew bundle
 
   # Nvm, node lts
-  curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-  source ~/.bash_profile
-  nvm install lts/*
+  #curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+  #source ~/.bash_profile
+  #nvm install lts/*
 
   # vim-plug, for vim plugin loading later
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -57,7 +62,8 @@ echo "Installing nvim CoC extensions"
 # Note: extensions are auto updated. However, auto update isn't support for
 # in-line Plug based install via vimrc, so have to install this way :(
 # Also, this hangs at the end :(
-nvim --headless -c "$(cat <<EOF
+#nvim --headless -c "$(cat <<EOF
+nvim -c "$(cat <<EOF
 :CocInstall \
 coc-tsserver \
 coc-json \
@@ -70,15 +76,15 @@ coc-tslint-plugin \
 coc-eslint \
 coc-docker
 EOF
-)" &
+)"
 
-NVIM_PID=$?
+#NVIM_PID=$?
 
-trap "echo \"Killed NVM PID $NVIM_PID\"" SIGTERM
+#trap "echo \"Killed NVM PID $NVIM_PID\"" TERM
 
-echo "Giving Neovim :CocInstall 20 seconds to complete..."
-sleep 20
-echo ""
-echo "Killing install because it hangs indefinitely. Hopefully it finished..."
-kill $NVIM_PID
+#echo "Giving Neovim :CocInstall 20 seconds to complete..."
+#sleep 20
+#echo ""
+#echo "Killing install because it hangs indefinitely. Hopefully it finished..."
+#kill $NVIM_PID
 echo "Install complete."
