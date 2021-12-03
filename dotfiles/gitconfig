@@ -22,7 +22,8 @@
 
 [core]
   excludesfile = ~/.gitignore
-	ignorecase = false
+  ignorecase = false
+  editor = vim
 
 [push]
   default = current

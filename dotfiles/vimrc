@@ -2,6 +2,7 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'editorconfig/editorconfig-vim'
+Plug 'prettier/vim-prettier'
 "Plug 'mileszs/ack.vim'
 Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -83,8 +84,8 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 "let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
 "let g:syntastic_json_checkers = ['jsonlint']
 "let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
-"let g:syntastic_typescript_checkers = ['tslint']
-"let g:syntastic_typescript_tslint_exe = '$(yarn bin)/tslint'
+"let g:syntastic_typescript_checkers = ['eslint']
+"let g:syntastic_typescript_tslint_exe = '$(yarn bin)/eslint'
 
 " onedark coloring
 colorscheme onedark
@@ -105,6 +106,7 @@ let mapleader = ','
 nmap <leader>n :NERDTreeFind <enter>
 nmap <leader>m <Plug>MarkdownPreview
 nmap <leader>j <Plug>(jsdoc)
+vmap <leader>j :!python -m json.tool <enter>
 "nmap <leader>s :SyntasticCheck <enter>
 "nmap <leader>sd :SyntasticReset <enter>
 
@@ -133,9 +135,10 @@ let g:jsdoc_input_description = 1
 " 'lifeomic-clone', etc to make working with multiple copies of the same project
 " in parallel easier.
 "let g:airline_section_b = '%-0.20{fnamemodify(getcwd(), ":h:t")}'
+"let g:airline_section_b = '%-0.30{fnamemodify(getcwd(), ":hk")}'
 " update: relative to root - e.g. /Users/druotic/repos/work/lifeomic/...
 let g:airline_section_b = '%-0.20{split(getcwd(), "/")[4]}'
-
+"
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
 let globalIgnore = '/Users/druotic/.gitignore'
@@ -167,7 +170,7 @@ match OverLength /\%81v.\+/
 "let g:syntastic_always_populate_loc_list = 1
 "let g:syntastic_auto_loc_list = 1
 
-"slow syntax checking
+"" slow syntax checking
 "let g:syntastic_mode_map = { 'mode': 'passive',
                             "\ 'active_filetypes': [],
                             "\ 'passive_filetypes': [] }
