@@ -33,14 +33,18 @@ alias untgz='tar -xvzf'
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
-alias cdl='cd ~/repos/work/lifeomic'
-alias cdc='cd ~/repos/work/lifeomic-clone'
-alias cdc2='cd ~/repos/work/lifeomic-clone-2'
+alias cdl='cd ~/repos/work/lifeomic/meta-all/repos/'
+alias cdc='cd ~/repos/work/lifeomic-clone/meta-all/repos'
+alias cdc2='cd ~/repos/work/lifeomic-clone-2/meta-all/repos'
+alias cds='cd ~/repos/work/sandbox'
 # needs to be same depth as cdl... but otherwise, naming is kinda useless/deep
 alias cdp='cd ~/repos/other/misc'
-alias cdl='cd ~/repos/work/lifeomic'
 alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
+
+purge-old-kernels () {
+  sudo apt-get purge $(dpkg -l linux-{image,headers}-"[0-9]*" | awk '/ii/{print $2}' | grep -ve "$(uname -r | sed -r 's/-[a-z]+//')")
+}
 
 unlinkPackage () {
   echo "Unlinking $1..."
@@ -60,7 +64,7 @@ repeat-it () {
   fi
   shift
   echo "Executing the following command $COUNT times: '$@'"
-  for i in `seq 1 $COUNT`; do $@ || return ; done
+  for i in `seq 1 $COUNT`; do eval "$@" || return ; done
 }
 
 # Repeat command ($2) $1 times, exit early if failure
@@ -72,13 +76,13 @@ repeat-it-count-failures () {
     return 1
   fi
   shift
-  CMD=$@
+  CMD="$@"
   FAIL_COUNT=0
   echo "Executing the following command $COUNT times: '$@'"
   for i in `seq 1 $COUNT`
   do
     echo "Starting run #${i}..."
-    $CMD
+    eval "$CMD"
     if [[ $? == 1 ]]; then
       echo "Failure detected in run #${i}"
       let "FAIL_COUNT++"
@@ -90,7 +94,7 @@ repeat-it-count-failures () {
 # $1 - ag basic search pattern, $2 - sed expression
 # recursively replaces file contents
 superSed () {
-  ag -l "$1" . | xargs sed -i '' -E "$2"
+  rg -l "$1" . | xargs sed -i -E "$2"
 }
 
 json_escape () {
@@ -168,3 +172,10 @@ setopt hist_ignore_all_dups inc_append_history
 HISTFILE=~/.zhistory
 HISTSIZE=10000
 SAVEHIST=10000
+
+fpath=(~/.zsh $fpath)
+
+# ctrl+left
+bindkey "^[[1;5D" backward-word
+# ctrl+right
+bindkey "^[[1;5C" forward-word
