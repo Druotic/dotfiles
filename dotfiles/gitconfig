@@ -40,4 +40,4 @@
 ;[includeIf "gitdir:~/repos/work/"]
 # Work specific config that's not sensitive. Use top level
 [includeIf "gitdir:~/repos/"]
-  path = .gitconfig-lifeomic
+  path = .gitconfig-xeal

@@ -1,6 +1,4 @@
-#visually breaks prompt sometimes right now
-#export PS1="\[\e[48;5;237m \W \$\e[0m \]"
-#export PS1='$USER@$(hostname):$(basename $PWD)$ '
+#visually breaks prompt sometimes right now export PS1="\[\e[48;5;237m \W \$\e[0m \]" export PS1='$USER@$(hostname):$(basename $PWD)$ '
 #export PS1="\[\033[0;35m\]\h\[\033[0;33m\] \w\[\033[00m\]: ???"
 # hide computer name
 
@@ -24,8 +22,8 @@ alias git-rm-remote-tag="git push --delete origin"
 
 alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
 
-alias rn='react-native'
-alias vim='nvim'
+#alias rn='react-native'
+alias vim=~/nvim.appimage
 
 alias ds='docker stop -t 3 $(docker ps -aq)'
 alias untgz='tar -xvzf'
@@ -33,12 +31,12 @@ alias untgz='tar -xvzf'
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
-alias cdl='cd ~/repos/work/lifeomic/meta-all/repos/'
-alias cdc='cd ~/repos/work/lifeomic-clone/meta-all/repos'
-alias cdc2='cd ~/repos/work/lifeomic-clone-2/meta-all/repos'
-alias cds='cd ~/repos/work/sandbox'
+alias cdx='cd ~/repos/xeal/'
+#alias cdc='cd ~/repos/work/lifeomic-clone/meta-all/repos'
+#alias cdc2='cd ~/repos/work/lifeomic-clone-2/meta-all/repos'
+#alias cds='cd ~/repos/work/sandbox'
 # needs to be same depth as cdl... but otherwise, naming is kinda useless/deep
-alias cdp='cd ~/repos/other/misc'
+#alias cdp='cd ~/repos/other/misc'
 alias life-extend-device="cd ~/repos/work/lifeomic/life-extend && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 alias life-extend-device-full="cd ~/repos/work/lifeomic/life-extend/android && ./gradlew clean && cd ../ && rm -rf node_modules && yarn full-install && adb reverse tcp:8081 tcp:8081 && react-native run-android --appFolder lifeextend"
 
@@ -112,6 +110,21 @@ port_in_use () {
   fi
 }
 
+set_active_audio_devices () {
+  local input="alsa_input.usb-Generic_Blue_Microphones_2051BAB09SA8-00.analog-stereo"
+  local output="alsa_output.usb-CMEDIA_USB2.0_High-Speed_True_HD_Audio-00.analog-stereo"
+
+  echo "\n\nAudio INPUTS:"
+  pactl list sources short
+  echo "\nAudio OUTPUTS:"
+  pactl list sinks short
+
+  echo "\nSetting input $input"
+  echo "Setting output $output\n"
+  pactl set-default-source "$input"
+  pactl set-default-sink "$output"
+}
+
 ### LifeOmic specific ###
 
 #reCloneLORepos () {
@@ -122,34 +135,34 @@ port_in_use () {
 #}
 
 
-wellness_deployment_dashboard () {
-  lifeomic-deployment-dashboard --service << EOF \
-provision-wellness-accounts \
-provision-wellness-gateway \
-wellness-admin-app \
-wellness-configuration-service \
-wellness-login \
-wellness-monitor
-EOF
-}
+#wellness_deployment_dashboard () {
+  #lifeomic-deployment-dashboard --service << EOF \
+#provision-wellness-accounts \
+#provision-wellness-gateway \
+#wellness-admin-app \
+#wellness-configuration-service \
+#wellness-login \
+#wellness-monitor
+#EOF
+#}
 
-mobile_deployments () {
- lifeomic-deployment-dashboard --service << EOF \
-notification-service \
-life-service \
-social-circle-service \
-file-service \
-user-service \
-graphql-proxy-service \
-life-monitor \
-life-social-queries-service \
-provision-life
-EOF
+#mobile_deployments () {
+ #lifeomic-deployment-dashboard --service << EOF \
+#notification-service \
+#life-service \
+#social-circle-service \
+#file-service \
+#user-service \
+#graphql-proxy-service \
+#life-monitor \
+#life-social-queries-service \
+#provision-life
+#EOF
 
-}
+#}
 
 # Note: org repo listing type=all is busted and only returns public. Have to separately specify internal/public to get everything
-lifeomic_clone_repos_gh () { [ -z "$GITHUB_PAT" ] && echo "Must provide GITHUB_PAT" || for type in internal public; do for page in {1..99999}; do URLS=$(curl -s -H "Authorization: token ${GITHUB_PAT}" "https://api.github.com/orgs/lifeomic/repos?per_page=100&page=$page&type=$type" | jq -r ".[].clone_url"); [ -z "$URLS" ] && echo "Done processing $type repositories." && break || for repo in $URLS; do git clone "$repo" 2>&1 | head; done; done; done }
+#lifeomic_clone_repos_gh () { [ -z "$GITHUB_PAT" ] && echo "Must provide GITHUB_PAT" || for type in internal public; do for page in {1..99999}; do URLS=$(curl -s -H "Authorization: token ${GITHUB_PAT}" "https://api.github.com/orgs/lifeomic/repos?per_page=100&page=$page&type=$type" | jq -r ".[].clone_url"); [ -z "$URLS" ] && echo "Done processing $type repositories." && break || for repo in $URLS; do git clone "$repo" 2>&1 | head; done; done; done }
 
 # Appends every command to the history file once it is executed
 setopt inc_append_history
@@ -162,10 +175,10 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-source <(lifeomic-aws -v partition commercial)
-LIFEOMIC_LOGIN_USERNAME=james.beavers
-LIFEOMIC_LOGIN_MFA=push
-export LIFEOMIC_LOGIN_USERNAME LIFEOMIC_LOGIN_MFA
+#source <(lifeomic-aws -v partition commercial)
+#LIFEOMIC_LOGIN_USERNAME=james.beavers
+#LIFEOMIC_LOGIN_MFA=push
+#export LIFEOMIC_LOGIN_USERNAME LIFEOMIC_LOGIN_MFA
 
 #History
 setopt hist_ignore_all_dups inc_append_history
@@ -179,3 +192,8 @@ fpath=(~/.zsh $fpath)
 bindkey "^[[1;5D" backward-word
 # ctrl+right
 bindkey "^[[1;5C" forward-word
+# search back
+bindkey "^R" history-incremental-search-backward
+
+nvm use 16
+set_active_audio_devices

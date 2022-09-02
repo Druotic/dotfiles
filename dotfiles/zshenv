@@ -3,7 +3,9 @@
 export GPG_TTY="$(tty)"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="$PATH:/usr/local/go/bin"
 
+# requires rbenv, TODO
 #eval "$(rbenv init -)"
 
 # For aws-sdk to work with configured profiles. Override AWS_PROFILE for
@@ -11,8 +13,8 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # Note: privileged roles like Support require re-login w/ CLI using different
 # lifeomic-master source role
 export AWS_SDK_LOAD_CONFIG=1
-#export AWS_PROFILE=lifeomic-dev
-#export AWS_DEFAULT_PROFILE=lifeomic-dev
+#export AWS_PROFILE=apollo
+export AWS_DEFAULT_PROFILE=xeal
 #export LIFEOMIC_TARGET_ENVIRONMENT=lifeomic-dev
 #export AWS_REGION=us-east-1
 #export LIFEOMIC_LOGIN_USERNAME=james.beavers
@@ -32,4 +34,10 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 export PATH="$HOME/.local/bin:$PATH"
 
+# needed for rootless
+# https://docs.docker.com/engine/security/rootless/
+export DOCKER_HOST=unix:///run/user/1000/docker.sock
+
 export PS1="%n@%M--%2C%# "
+
+export EDITOR=~/nvim.appimage
