@@ -22,6 +22,26 @@ Plug 'udalov/kotlin-vim'
 " Note: extensions are auto updated and initial install is in install.sh
 " auto update isn't support for in-line Plug based install :(
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'plytophogy/vim-virtualenv'
+"Plug 'PieterjanMontens/vim-pipenv'
+au FileType python let b:coc_root_patterns = ['.venv', '.git', '.env', 'venv', 'setup.cfg', 'setup.py', 'pyrightconfig.json', 'env']
+
+" Point YCM to the Pipenv created virtualenv, if possible
+" At first, get the output of 'pipenv --venv' command.
+let pipenv_venv_path = system('pipenv --venv')
+" The above system() call produces a non zero exit code whenever
+" a proper virtual environment has not been found.
+" So, second, we only point YCM to the virtual environment when
+" the call to 'pipenv --venv' was successful.
+" Remember, that 'pipenv --venv' only points to the root directory
+" of the virtual environment, so we have to append a full path to
+" the python executable.
+if shell_error == 0
+  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+  let g:ycm_python_binary_path = venv_path . '/bin/python'
+else
+  let g:ycm_python_binary_path = 'python'
+endif
 
 " Initialize plugin system
 call plug#end()
@@ -88,7 +108,7 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 "let g:syntastic_typescript_tslint_exe = '$(yarn bin)/eslint'
 
 " onedark coloring
-colorscheme onedark
+"colorscheme onedark
 
 set wildignore+=*/package-lock.json
 
@@ -137,7 +157,7 @@ let g:jsdoc_input_description = 1
 "let g:airline_section_b = '%-0.20{fnamemodify(getcwd(), ":h:t")}'
 "let g:airline_section_b = '%-0.30{fnamemodify(getcwd(), ":hk")}'
 " update: relative to root - e.g. /Users/druotic/repos/work/lifeomic/...
-let g:airline_section_b = '%-0.20{split(getcwd(), "/")[4]}'
+"let g:airline_section_b = '%-0.20{split(getcwd(), "/")[4]}'
 "
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore

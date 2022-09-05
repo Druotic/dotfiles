@@ -39,5 +39,8 @@
 
 ;[includeIf "gitdir:~/repos/work/"]
 # Work specific config that's not sensitive. Use top level
-[includeIf "gitdir:~/repos/"]
-  path = .gitconfig-lifeomic
+;[includeIf "gitdir:~/repos/"]
+  ;path = .gitconfig-lifeomic
+[user]
+	email = jamesjbeavers@gmail.com
+	name = James Beavers
