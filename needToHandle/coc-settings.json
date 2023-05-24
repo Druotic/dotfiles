@@ -25,5 +25,6 @@
   "typescript.format.insertSpaceAfterSemicolonInForStatements": true,
   "typescript.format.insertSpaceAfterTypeAssertion": true,
   "typescript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
-  "typescript.format.insertSpaceBeforeFunctionParenthesis": true
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "typescript.suggest.autoImports": true
 }

@@ -41,3 +41,6 @@
 # Work specific config that's not sensitive. Use top level
 [includeIf "gitdir:~/repos/"]
   path = .gitconfig-xeal
+[user]
+	email = jamesjbeavers@gmail.com
+	name = James Beavers

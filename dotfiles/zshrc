@@ -196,4 +196,4 @@ bindkey "^[[1;5C" forward-word
 bindkey "^R" history-incremental-search-backward
 
 nvm use 16
-set_active_audio_devices
+#set_active_audio_devices

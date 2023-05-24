@@ -17,7 +17,10 @@ Plug 'mhinz/vim-signify'
 Plug 'iamcco/mathjax-support-for-mkdp'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'scrooloose/nerdcommenter'
-Plug 'heavenshell/vim-jsdoc'
+Plug 'heavenshell/vim-jsdoc', {
+  \ 'for': ['javascript', 'javascript.jsx','typescript'],
+  \ 'do': 'make install'
+\}
 Plug 'udalov/kotlin-vim'
 " Note: extensions are auto updated and initial install is in install.sh
 " auto update isn't support for in-line Plug based install :(
@@ -58,6 +61,7 @@ set signcolumn=yes
 set switchbuf=vsplit
 
 inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <expr> <Enter> coc#pum#visible() ? coc#pum#confirm() : "\<Enter>"
 
 " Use `[c` and `]c` to navigate diagnostics
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
@@ -79,15 +83,17 @@ set wildmenu
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 
 " polyglot, syntax highlighting on
-"syntax on
-"let g:syntastic_jsx_checkers = ['eslint']
-"let g:syntastic_jsx_eslint_exe = '$(yarn bin)/eslint'
-"let g:syntastic_javascript_checkers = ['eslint']
-"let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
-"let g:syntastic_json_checkers = ['jsonlint']
-"let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
-"let g:syntastic_typescript_checkers = ['eslint']
-"let g:syntastic_typescript_tslint_exe = '$(yarn bin)/eslint'
+syntax on
+let g:syntastic_jsx_checkers = ['eslint']
+let g:syntastic_jsx_eslint_exe = '$(yarn bin)/eslint'
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exe = '$(yarn bin)/eslint'
+let g:syntastic_json_checkers = ['jsonlint']
+let g:syntastic_json_jsonlint_exe = '$(yarn bin)/jsonlint'
+let g:syntastic_typescript_checkers = ['eslint']
+let g:syntastic_typescript_tslint_exe = '$(yarn bin)/eslint'
+
+let g:coc_disable_startup_warning = 1
 
 " onedark coloring
 colorscheme onedark

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-#set -e
+set -e
 
 DOTFILES_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 
@@ -9,34 +9,47 @@ function main () {
 
   linkDotfiles
 
-  local SYSTEM="$(uname)"
+  local system="$(uname)"
+  uname -a | grep microsoft > /dev/null
+  [[ $? -eq 0 ]] && local is_wsl=1
 
-  case ${SYSTEM} in
+  case ${system} in
   'Darwin')
     echo "MacOS detected, NOT IMPLEMENTED"
+    setupKitty
     ;;
   'Linux')
-    # assume Ubuntu for now
     echo "Linux detected, installing programs for Linux..."
     installLinuxPrograms
+
+    if [[ $is_wsl -eq 1 ]]; then
+      echo "TODO. No WSL specific behavior yet..."
+      # WSL installation - using Windows Terminal
+    else
+      # Regular linux installation - using Kitty terminal
+      setupKitty
+    fi
     ;;
   *)
-    echo "${SYSTEM} is not supported"
+    echo "${system} is not supported"
   esac
 
   echo "Fetching antigen..."
   curl -L git.io/antigen > antigen.zsh
 
+  # Non OS-specific tools
   setupNvm
   setupVim
-  setupKitty
-  setupInsync
+  # No longer used? Need to set up PW syncing for work machines, though. Maybe
+  # not if using lastpass.
+  #setupInsync
 
   echo "Install complete!"
 }
 
 function linkDotfiles () {
   echo "Linking dotfiles"
+
   pushd dotfiles
   for file in $(ls); do
     absfile="$(realpath $file)"
@@ -58,6 +71,9 @@ function linkDotfiles () {
     ln -nfs $absfile "$HOME/.local/bin/$basefile"
   done
 
+  mkdir -p ~/.config/kitty
+  echo "Linking $HOME/.config/kitty/theme.conf --> $(realpath ./other/kitty/theme.conf)"
+  echo "Linking $HOME/.config/kitty/kitty.conf --> $(realpath ./other/kitty/kitty.conf)"
   ln -nfs "$(realpath ./other/kitty/theme.conf)" "$HOME/.config/kitty/theme.conf"
   ln -nfs "$(realpath ./other/kitty/kitty.conf)" "$HOME/.config/kitty/kitty.conf"
 }
