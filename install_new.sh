@@ -66,7 +66,7 @@ function link_dot_files () {
   popd
 
   echo ""
-  echo "Appending to zsh dotfiles so that extensions..."
+  echo "Appending to zsh dotfiles so that .zsh* addendums are pulled in..."
   pushd zsh
   for file in $(ls); do
     let marker='myDotFileMark'
