@@ -1,0 +1,36 @@
+# GPG signing of commits - necessary for GPG to open passphrase prompt during
+# signing
+export GPG_TTY="$(tty)"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+export ANDROID_HOME=${HOME}/android-sdk
+export PATH=${PATH}:${ANDROID_HOME}/emulator
+export PATH=${PATH}:${ANDROID_HOME}/tools
+export PATH=${PATH}:${ANDROID_HOME}/tools/bin
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+
+# needed for rootless
+# https://docs.docker.com/engine/security/rootless/
+export DOCKER_HOST=unix:///run/user/1000/docker.sockq
+
+export HISTFILE=~/.zhistory
+export HISTSIZE=10000
+export SAVEHIST=10000
+
+TODO: why did I add this?
+# export PS1="%n@%M--%2C%# "
+# TODO: delete this cruft
+#visually breaks prompt sometimes right now export PS1="\[\e[48;5;237m \W \$\e[0m \]" export PS1='$USER@$(hostname):$(basename $PWD)$ '
+#export PS1="\[\033[0;35m\]\h\[\033[0;33m\] \w\[\033[00m\]: ???"
+# hide computer name
+
+export EDITOR=vim
+
+# Differentiate files, directories, etc
+if [[ "$(uname)" = 'Linux' ]]; then
+  export LS_COLORS="di=1;36:ln=35:so=32:pi=33:ex=1;31:bd=34;46:cd=34;42:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+else
+  # Darwin. TODO: windows
+  export LSCOLORS="GxfxcxdxBxegecabagacad"
+fi

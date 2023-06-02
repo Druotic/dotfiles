@@ -7,7 +7,8 @@ DOTFILES_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 function main () {
   echo "Installing..."
 
-  linkDotfiles
+  link_dot_files
+  install_antigen
 
   local system="$(uname)"
   uname -a | grep microsoft > /dev/null
@@ -15,48 +16,63 @@ function main () {
 
   case ${system} in
   'Darwin')
-    echo "MacOS detected, NOT IMPLEMENTED"
-    setupKitty
+    echo "MacOS detected..."
+    install_mac_os_deps
+    setup_kitty
     ;;
   'Linux')
-    echo "Linux detected, installing programs for Linux..."
-    installLinuxPrograms
+    echo "Linux detected..."
+    install_linux_deps
+    install_vim_linux
 
     if [[ $is_wsl -eq 1 ]]; then
       echo "TODO. No WSL specific behavior yet..."
       # WSL installation - using Windows Terminal
     else
       # Regular linux installation - using Kitty terminal
-      setupKitty
+      setup_kitty
     fi
     ;;
   *)
-    echo "${system} is not supported"
+    echo "${system} is not supported yet"
   esac
 
-  echo "Fetching antigen..."
-  curl -L git.io/antigen > antigen.zsh
-
   # Non OS-specific tools
-  setupNvm
-  setupVim
-  # No longer used? Need to set up PW syncing for work machines, though. Maybe
-  # not if using lastpass.
-  #setupInsync
+  setup_vim
 
   echo "Install complete!"
 }
 
-function linkDotfiles () {
-  echo "Linking dotfiles"
+function install_antigen () {
+  echo "Installing antigen..."
+  if [[ ! -f ~/.antigen.zsh ]]; then
+    curl -L https://git.io/antigen > ~/.antigen.zsh
+  else
+    echo "antigen is already installed. Skipping."
+  fi
+}
 
-  pushd dotfiles
+function link_dot_files () {
+  echo "Linking dotfiles..."
+
+  pushd linkedDotFiles
   for file in $(ls); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
     dirfile="$(dirname $absfile)"
     echo "Linking ~/.$basefile --> $absfile"
     ln -nfs $absfile ~/.$basefile
+  done
+  popd
+
+  echo ""
+  echo "Appending to zsh dotfiles so that extensions..."
+  pushd zsh
+  for file in $(ls); do
+    let marker='myDotFileMark'
+    if ! grep -q "$marker" ~/.$file; then
+      echo ". $(realpath $file) #$marker" >> ~/.$file
+    fi
   done
   popd
 
@@ -78,7 +94,13 @@ function linkDotfiles () {
   ln -nfs "$(realpath ./other/kitty/kitty.conf)" "$HOME/.config/kitty/kitty.conf"
 }
 
-function installLinuxPrograms () {
+function install_mac_os_deps() {
+  echo "installing MacOS deps..."
+  brew bundle
+}
+
+function install_linux_deps() {
+  echo "installing linux deps..."
   sudo apt update
 
   sudo apt-get install -y \
@@ -94,23 +116,7 @@ function installLinuxPrograms () {
   sudo apt upgrade -y
 }
 
-function setupInsync () {
-  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C
-  # jammy = 22.04
-  echo 'deb http://apt.insync.io/ubuntu jammy non-free contrib' | sudo tee /etc/apt/sources.list.d/insync.list
-  sudo apt update
-  sudo apt install -y insync
-}
-
-function setupNvm () {
-  echo 'installing nvm and node...'
-  ## Nvm, node lts
-  curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-  . ~/.bashrc
-  nvm install lts/*
-}
-
-function setupKitty () {
+function setup_kitty () {
   echo 'installing Kitty...'
   curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
@@ -118,27 +124,28 @@ function setupKitty () {
   # your system-wide PATH)
   ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
   # Place the kitty.desktop file somewhere it can be found by the OS
-  cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+  # re-enable if necessary
+  #cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
 }
 
-function setupVim () {
-  # install vim plugins
+function install_vim_linux() {
+  echo "install nvim appimage..."
   curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
   mv nvim.appimage $HOME
   chmod u+x ~/nvim.appimage
+}
 
+function setup_vim () {
   echo "Installing vim plugged..."
-  # vim
-  curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  # neovim
+
+  # for neovim
   curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
   echo "Installing vim plugins..."
-  # vim +PlugInstall +PlugUpdate +qall
-  ~/nvim.appimage +PlugInstall +PlugUpdate +qall
-  ~/nvim.appimage +CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker +qall
+  vim +PlugInstall +PlugUpdate +qall
+  # ~/nvim.appimage +PlugInstall +PlugUpdate +qall
+  # ~/nvim.appimage +CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker +qall
 }
 
 main

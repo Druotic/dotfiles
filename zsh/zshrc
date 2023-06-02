@@ -1,0 +1,140 @@
+#alias ls='ls -lGH --color=auto'
+# Zsh to use the same colors as ls
+#zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
+
+alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
+alias git-rm-remote-tag="git push --delete origin"
+
+alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
+
+alias vim=nvim
+
+alias ds='docker stop -t 3 $(docker ps -aq)'
+alias untgz='tar -xvzf'
+
+alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
+alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
+
+alias cdh='cd ~/repos/headspace/'
+alias cdo='cd ~/repos/other/'
+
+unlinkPackage () {
+  echo "Unlinking $1..."
+  pushd ~/.config/yarn/link/$1
+  ls
+  yarn unlink
+  popd
+}
+
+# Repeat command ($2) $1 times, exit early if failure
+repeat-it () {
+  RE='^[0-9]+$' 
+  COUNT=$1
+  if ! [[ $COUNT =~ $RE ]] ; then
+    echo "First arg must be a number, found '$COUNT'"
+    return 1
+  fi
+  shift
+  echo "Executing the following command $COUNT times: '$@'"
+  for i in `seq 1 $COUNT`; do eval "$@" || return ; done
+}
+
+# Repeat command ($2) $1 times, exit early if failure
+repeat-it-count-failures () {
+  RE='^[0-9]+$' 
+  COUNT=$1
+  if ! [[ $COUNT =~ $RE ]] ; then
+    echo "First arg must be a number, found '$COUNT'"
+    return 1
+  fi
+  shift
+  CMD="$@"
+  FAIL_COUNT=0
+  echo "Executing the following command $COUNT times: '$@'"
+  for i in `seq 1 $COUNT`
+  do
+    echo "Starting run #${i}..."
+    eval "$CMD"
+    if [[ $? == 1 ]]; then
+      echo "Failure detected in run #${i}"
+      let "FAIL_COUNT++"
+    fi
+  done
+  echo "All done. $FAIL_COUNT/$COUNT failures detected."
+}
+
+# $1 - ag basic search pattern, $2 - sed expression
+# recursively replaces file contents
+superSed () {
+  rg -l "$1" . | xargs sed -i -E "$2"
+}
+
+json_escape () {
+    printf '%s' "$1" | node 
+    printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}
+
+port_in_use () {
+  echo "Checking if port $1 is in use..."
+  output=$(lsof -nP -iTCP:$1 | grep LISTEN)
+  if [ "$?" == "1" ]; then
+    echo "Port $1 not in use."
+  else
+    echo "$output"
+  fi
+}
+
+set_active_audio_devices () {
+  local input="alsa_input.usb-Generic_Blue_Microphones_2051BAB09SA8-00.analog-stereo"
+  local output="alsa_output.usb-CMEDIA_USB2.0_High-Speed_True_HD_Audio-00.analog-stereo"
+
+  echo "\n\nAudio INPUTS:"
+  pactl list sources short
+  echo "\nAudio OUTPUTS:"
+  pactl list sinks short
+
+  echo "\nSetting input $input"
+  echo "Setting output $output\n"
+  pactl set-default-source "$input"
+  pactl set-default-sink "$output"
+}
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fpath=(~/.zsh $fpath)
+
+# History
+## Appends every command to the history file once it is executed
+setopt inc_append_history
+## Reloads the history whenever you use it
+setopt share_history
+setopt hist_ignore_all_dups inc_append_history
+
+# ctrl+left
+bindkey "^[[1;5D" backward-word
+# ctrl+right
+bindkey "^[[1;5C" forward-word
+# search back
+bindkey "^R" history-incremental-search-backward
+
+#set_active_audio_devices
+
+# load antigen
+source ~/antigen.zsh
+# load antigen config
+antigen init ~/.antigenrc
+
+if [[ "$(uname)" = 'Linux' ]]; then
+  # linux uses portable appimage
+  alias nvim='~/nvim.appimage'
+
+  # OSX-isms to make OSX-centric instructions less painful to work around
+  alias pbcopy='xclip -selection clipboard'
+  alias pbpaste='xclip -selection clipboard -o'
+  alias open='xdg-open'
+
+  # misc linux-specific cruft aliases
+  purge-old-kernels () {
+    sudo apt-get purge $(dpkg -l linux-{image,headers}-"[0-9]*" | awk '/ii/{print $2}' | grep -ve "$(uname -r | sed -r 's/-[a-z]+//')")
+  }
+fi
