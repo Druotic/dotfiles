@@ -1,6 +1,0 @@
-[user]
-  user = jjbeavers-xeal
-  name = James Beavers
-  email = james@xealenergy.com
-[core]
-  hooksPath = ~/.git-templates/hooks

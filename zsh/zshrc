@@ -1,13 +1,7 @@
-#alias ls='ls -lGH --color=auto'
-# Zsh to use the same colors as ls
-#zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
-
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias git-rm-remote-tag="git push --delete origin"
 
 alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
-
-alias vim=nvim
 
 alias ds='docker stop -t 3 $(docker ps -aq)'
 alias untgz='tar -xvzf'
@@ -17,6 +11,8 @@ alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs
 
 alias cdh='cd ~/repos/headspace/'
 alias cdo='cd ~/repos/other/'
+
+alias vim=nvim
 
 unlinkPackage () {
   echo "Unlinking $1..."
@@ -30,27 +26,29 @@ unlinkPackage () {
 repeat-it () {
   RE='^[0-9]+$' 
   COUNT=$1
+  CMD="$2"
   if ! [[ $COUNT =~ $RE ]] ; then
     echo "First arg must be a number, found '$COUNT'"
     return 1
   fi
   shift
-  echo "Executing the following command $COUNT times: '$@'"
-  for i in `seq 1 $COUNT`; do eval "$@" || return ; done
+  echo "Executing the following command $COUNT times: '$CMD'"
+  for i in `seq 1 $COUNT`; do eval "$CMD" || return ; done
 }
 
+# cmd must be wrapped in quotes
 # Repeat command ($2) $1 times, exit early if failure
 repeat-it-count-failures () {
   RE='^[0-9]+$' 
   COUNT=$1
+  CMD="$2"
   if ! [[ $COUNT =~ $RE ]] ; then
     echo "First arg must be a number, found '$COUNT'"
     return 1
   fi
   shift
-  CMD="$@"
   FAIL_COUNT=0
-  echo "Executing the following command $COUNT times: '$@'"
+  echo "Executing the following command $COUNT times: '$CMD'"
   for i in `seq 1 $COUNT`
   do
     echo "Starting run #${i}..."
@@ -76,28 +74,42 @@ json_escape () {
 
 port_in_use () {
   echo "Checking if port $1 is in use..."
-  output=$(lsof -nP -iTCP:$1 | grep LISTEN)
-  if [ "$?" == "1" ]; then
+  output="$(lsof -nP -iTCP:$1 | grep LISTEN)"
+  if [[ "$?" == "1" ]]; then
     echo "Port $1 not in use."
   else
+    echo "lsof output for port $1:"
     echo "$output"
   fi
 }
 
-set_active_audio_devices () {
-  local input="alsa_input.usb-Generic_Blue_Microphones_2051BAB09SA8-00.analog-stereo"
-  local output="alsa_output.usb-CMEDIA_USB2.0_High-Speed_True_HD_Audio-00.analog-stereo"
-
-  echo "\n\nAudio INPUTS:"
-  pactl list sources short
-  echo "\nAudio OUTPUTS:"
-  pactl list sinks short
-
-  echo "\nSetting input $input"
-  echo "Setting output $output\n"
-  pactl set-default-source "$input"
-  pactl set-default-sink "$output"
+reload_audio () {
+  #sudo kextunload /System/Library/Extensions/AppleHDA.kext
+  #sudo kextload /System/Library/Extensions/AppleHDA.kext
+  sudo pkill coreaudiod
 }
+
+alias audio_get_inputs='SwitchAudioSource -t input -a'
+alias audio_set_input='SwitchAudioSource -t input -s'
+alias audio_get_outputs='SwitchAudioSource -t output -a'
+alias audio_set_output='SwitchAudioSource -t output -s'
+
+
+# linux
+#set_active_audio_devices () {
+  #local input="alsa_input.usb-Generic_Blue_Microphones_2051BAB09SA8-00.analog-stereo"
+  #local output="alsa_output.usb-CMEDIA_USB2.0_High-Speed_True_HD_Audio-00.analog-stereo"
+
+  #echo "\n\nAudio INPUTS:"
+  #pactl list sources short
+  #echo "\nAudio OUTPUTS:"
+  #pactl list sinks short
+
+  #echo "\nSetting input $input"
+  #echo "Setting output $output\n"
+  #pactl set-default-source "$input"
+  #pactl set-default-sink "$output"
+#}
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -120,10 +132,10 @@ bindkey "^R" history-incremental-search-backward
 #set_active_audio_devices
 
 # load antigen
-source ~/antigen.zsh
-# load antigen config
-antigen init ~/.antigenrc
+source ~/.antigen.zsh
 
+# load antigen config and put executables in path
+antigen init ~/.antigenrc
 if [[ "$(uname)" = 'Linux' ]]; then
   # linux uses portable appimage
   alias nvim='~/nvim.appimage'
@@ -138,3 +150,8 @@ if [[ "$(uname)" = 'Linux' ]]; then
     sudo apt-get purge $(dpkg -l linux-{image,headers}-"[0-9]*" | awk '/ii/{print $2}' | grep -ve "$(uname -r | sed -r 's/-[a-z]+//')")
   }
 fi
+
+# TODO: remove this and adopt zsh theme
+alias ls='ls -lGH --color=auto'
+# Zsh to use the same colors as ls
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  

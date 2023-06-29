@@ -2,6 +2,17 @@
 # signing
 export GPG_TTY="$(tty)"
 
+export AWS_SDK_LOAD_CONFIG=1
+export AWS_DEFAULT_PROFILE=foo
+
+# https://github.com/kennyp/asdf-golang#version-selection
+export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+
+# TODO: linux support
+export PATH=${PATH}:/opt/homebrew/bin
+. "$(brew --prefix asdf)/libexec/asdf.sh"
+export PATH="$(go env GOPATH)/bin:$PATH"
+
 export PATH="$HOME/.local/bin:$PATH"
 
 export ANDROID_HOME=${HOME}/android-sdk
@@ -12,20 +23,21 @@ export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 
 # needed for rootless
 # https://docs.docker.com/engine/security/rootless/
-export DOCKER_HOST=unix:///run/user/1000/docker.sockq
+#export DOCKER_HOST=unix:///run/user/1000/docker.sock
+export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
 
 export HISTFILE=~/.zhistory
 export HISTSIZE=10000
 export SAVEHIST=10000
 
-TODO: why did I add this?
+#TODO: why did I add this?
 # export PS1="%n@%M--%2C%# "
 # TODO: delete this cruft
 #visually breaks prompt sometimes right now export PS1="\[\e[48;5;237m \W \$\e[0m \]" export PS1='$USER@$(hostname):$(basename $PWD)$ '
 #export PS1="\[\033[0;35m\]\h\[\033[0;33m\] \w\[\033[00m\]: ???"
 # hide computer name
 
-export EDITOR=vim
+export EDITOR=nvim
 
 # Differentiate files, directories, etc
 if [[ "$(uname)" = 'Linux' ]]; then

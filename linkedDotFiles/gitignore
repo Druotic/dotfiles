@@ -72,6 +72,9 @@ Session.vim
 # vim Auto-generated tag files
 tags
 
+# vim edit files/backup
+*-E
+
 # alpine linux uses ash shell (alpine docker images)
 .ash_history
 dist/

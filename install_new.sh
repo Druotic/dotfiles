@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 #
-set -e
+#set -e
 
 DOTFILES_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 
 function main () {
   echo "Installing..."
-
   link_dot_files
-  install_antigen
 
   local system="$(uname)"
+  uname -a | grep microsoft
   uname -a | grep microsoft > /dev/null
   [[ $? -eq 0 ]] && local is_wsl=1
 
+  echo "uname: ${system}"
   case ${system} in
   'Darwin')
     echo "MacOS detected..."
     install_mac_os_deps
     setup_kitty
+    link_brew_bash
     ;;
   'Linux')
     echo "Linux detected..."
@@ -38,6 +39,8 @@ function main () {
   esac
 
   # Non OS-specific tools
+  install_antigen
+  setup_asdf
   setup_vim
 
   echo "Install complete!"
@@ -50,6 +53,12 @@ function install_antigen () {
   else
     echo "antigen is already installed. Skipping."
   fi
+}
+
+function link_brew_bash () {
+  echo "Linking brew version of bash to ~/.local ..."
+  #ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
+  sudo ln -nfs "$(brew --prefix bash)/bin/bash" "/usr/local/bin/bash"
 }
 
 function link_dot_files () {
@@ -65,15 +74,19 @@ function link_dot_files () {
   done
   popd
 
+  pushd zsh
   echo ""
   echo "Appending to zsh dotfiles so that .zsh* addendums are pulled in..."
-  pushd zsh
+  let marker='myDotFileMark'
   for file in $(ls); do
-    let marker='myDotFileMark'
     if ! grep -q "$marker" ~/.$file; then
       echo ". $(realpath $file) #$marker" >> ~/.$file
     fi
   done
+  if ! grep -q "$marker" ~/.bash_profile; then
+    echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
+    echo ". $(realpath 'zshenv') #$marker" >> ~/.bash_profile
+  fi
   popd
 
   echo ""
@@ -94,9 +107,21 @@ function link_dot_files () {
   ln -nfs "$(realpath ./other/kitty/kitty.conf)" "$HOME/.config/kitty/kitty.conf"
 }
 
+function update_default_shell () {
+
+  let marker='myDotFileMark'
+  if ! grep -q "$marker" ~/.bash_profile; then
+    echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
+    echo ". $(realpath 'zshenv') #$marker" >> ~/.bash_profile
+  fi
+}
+
 function install_mac_os_deps() {
   echo "installing MacOS deps..."
-  brew bundle
+  # TODO: better handling... externally managed chrome, etc will cause non-zero exit code
+  # --no-upgrade will install latest first time but allows rerunning without
+  # unexpected major version bumps
+  brew bundle --no-upgrade || true
 }
 
 function install_linux_deps() {
@@ -118,72 +143,68 @@ function install_linux_deps() {
 
 function setup_kitty () {
   echo 'installing Kitty...'
-  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+  if [[ ! -L ~/.local/bin/kitty ]]; then
+	  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
-  # Create a symbolic link to add kitty to PATH (assuming ~/.local/bin is in
-  # your system-wide PATH)
-  ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
-  # Place the kitty.desktop file somewhere it can be found by the OS
-  # re-enable if necessary
-  #cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+	  # Create a symbolic link to add kitty to PATH (assuming ~/.local/bin is in
+	  # your system-wide PATH)
+	  ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
+	  # Place the kitty.desktop file somewhere it can be found by the OS
+	  # re-enable if necessary
+	  #cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+  else
+	  echo "kitty already installed. skip"
+  fi
 }
 
 function install_vim_linux() {
-  echo "install nvim appimage..."
-  curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
-  mv nvim.appimage $HOME
-  chmod u+x ~/nvim.appimage
+  echo "install neovim appimage..."
+  if [[ ! -f ~/nvim.appimage ]]; then
+	  curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
+	  mv nvim.appimage $HOME
+	  chmod u+x ~/nvim.appimage
+  else
+	  echo "neovim already installed. skip"
+  fi
+
 }
 
 function setup_vim () {
-  echo "Installing vim plugged..."
+  echo "Setting up neovim..."
+  if [[ -f ~/.local/share/nvim/site/autoload/plug.vim ]]; then
+	  echo "vim already set up. skip"
+	  return 0
+  fi
 
   # for neovim
   curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
   echo "Installing vim plugins..."
-  vim +PlugInstall +PlugUpdate +qall
-  # ~/nvim.appimage +PlugInstall +PlugUpdate +qall
-  # ~/nvim.appimage +CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker +qall
+  #nvim --headless +PlugInstall +PlugUpdate +qall
+  #nvim +PlugInstall +PlugUpdate +qall
+  #nvim +CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker +qall
+
+  # neovim - use shared vimrc and runtime paths
+  echo "Setting up init.vim to use shared vim config"
+  mkdir -p ~/.config/nvim
+  cat <<EOF > ~/.config/nvim/init.vim
+  set runtimepath^=~/.vim runtimepath+=~/.vim/after
+  let &packpath=&runtimepath
+  source ~/.vimrc
+EOF
+}
+
+function setup_asdf () {
+  asdf plugin add nodejs
+  asdf plugin add yarn
+  asdf plugin add python
+  asdf plugin add terraform
+  asdf plugin add go
 }
 
 main
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## neovim - use shared vimrc and runtime paths
-#echo "Setting up init.vim to use shared vim config"
-#mkdir -p ~/.config/nvim
-#cat <<EOF > ~/.config/nvim/init.vim
-#set runtimepath^=~/.vim runtimepath+=~/.vim/after
-#let &packpath=&runtimepath
-#source ~/.vimrc
-#EOF
 
 #first_time_setup () {
   ### Nvm, node lts

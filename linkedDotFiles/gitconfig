@@ -23,7 +23,8 @@
 [core]
   excludesfile = ~/.gitignore
   ignorecase = false
-  editor = vim
+  editor = nvim
+  ;hooksPath = ~/.git-templates/hooks
 
 [push]
   default = current
@@ -32,15 +33,11 @@
   # forced to add this after git upgrade to avoid warnings (this is the default)
   rebase = false
 
-;[user]
-  ;user = Druotic
-  ;name = James Beavers
-  ;email = jamesjbeavers@gmail.com
-
-;[includeIf "gitdir:~/repos/work/"]
-# Work specific config that's not sensitive. Use top level
-[includeIf "gitdir:~/repos/"]
-  path = .gitconfig-xeal
 [user]
-	email = jamesjbeavers@gmail.com
-	name = James Beavers
+  user = Druotic
+  name = James Beavers
+  email = jamesjbeavers@gmail.com
+
+# Work specific config that's not sensitive. Use top level
+[includeIf "gitdir:~/repos/headspace/"]
+  path = .gitconfig-headspace

@@ -1,0 +1,11 @@
+[user]
+  user = jjbeavers-hs
+  name = James Beavers
+  email = foo@gmail.com
+  signingkey = foo
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[gpg]
+  program = gpg
