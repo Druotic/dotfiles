@@ -38,6 +38,9 @@
   name = James Beavers
   email = jamesjbeavers@gmail.com
 
+[init]
+  defaultBranch = main
+
 # Work specific config that's not sensitive. Use top level
 [includeIf "gitdir:~/repos/headspace/"]
   path = .gitconfig-headspace

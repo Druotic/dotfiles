@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-#
-#set -e
+set -e
 
-DOTFILES_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+MARKER='myDotFileMark'
+DOTFILES_DIR="$(cd $(dirname "$0") && pwd)"
 
 function main () {
   echo "Installing..."
   link_dot_files
 
   local system="$(uname)"
-  uname -a | grep microsoft
+
+  set +e # temp disable, grep non-0 for no match
   uname -a | grep microsoft > /dev/null
   [[ $? -eq 0 ]] && local is_wsl=1
+  set -e
 
   echo "uname: ${system}"
   case ${system} in
@@ -19,7 +21,7 @@ function main () {
     echo "MacOS detected..."
     install_mac_os_deps
     setup_kitty
-    link_brew_bash
+    #link_brew_bash # see NOTE
     ;;
   'Linux')
     echo "Linux detected..."
@@ -55,73 +57,95 @@ function install_antigen () {
   fi
 }
 
+# NOTE: not used ATM (as of 7/29/23). Something about sys dirs seems to have
+# changed and made this no longer necessary. Keeping it around until next
+# full reinstall just to be sure.
 function link_brew_bash () {
   echo "Linking brew version of bash to ~/.local ..."
-  #ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
+  ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
   sudo ln -nfs "$(brew --prefix bash)/bin/bash" "/usr/local/bin/bash"
 }
 
 function link_dot_files () {
   echo "Linking dotfiles..."
 
-  pushd linkedDotFiles
+  pushd dotFiles > /dev/null
   for file in $(ls); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
-    dirfile="$(dirname $absfile)"
     echo "Linking ~/.$basefile --> $absfile"
     ln -nfs $absfile ~/.$basefile
   done
-  popd
+  popd > /dev/null
 
-  pushd zsh
+  pushd zsh > /dev/null
   echo ""
   echo "Appending to zsh dotfiles so that .zsh* addendums are pulled in..."
-  let marker='myDotFileMark'
+
+  set +e # temp disable, grep non-0 for no match
   for file in $(ls); do
-    if ! grep -q "$marker" ~/.$file; then
-      echo ". $(realpath $file) #$marker" >> ~/.$file
+    touch ~/.$file
+    if ! grep -q "$MARKER" ~/.$file; then
+      echo ". $(realpath $file) #$MARKER" >> ~/.$file
     fi
   done
-  if ! grep -q "$marker" ~/.bash_profile; then
-    echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
-    echo ". $(realpath 'zshenv') #$marker" >> ~/.bash_profile
+
+  echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
+  if ! grep -q "$MARKER" ~/.bash_profile; then
+    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
-  popd
+  set -e
+
+  popd > /dev/null
 
   echo ""
   echo "Linking scripts"
   for file in $(ls -p ./scripts/*); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
-    dirfile="$(dirname $absfile)"
     mkdir -p $HOME/.local/bin
     echo "Linking $HOME/.local/bin/$basefile --> $absfile"
     ln -nfs $absfile "$HOME/.local/bin/$basefile"
   done
 
-  mkdir -p ~/.config/kitty
-  echo "Linking $HOME/.config/kitty/theme.conf --> $(realpath ./other/kitty/theme.conf)"
-  echo "Linking $HOME/.config/kitty/kitty.conf --> $(realpath ./other/kitty/kitty.conf)"
-  ln -nfs "$(realpath ./other/kitty/theme.conf)" "$HOME/.config/kitty/theme.conf"
-  ln -nfs "$(realpath ./other/kitty/kitty.conf)" "$HOME/.config/kitty/kitty.conf"
+  echo ""
+  echo "Linking ~/.config dirs"
+  pushd dotConfig > /dev/null
+  for file in $(ls); do
+    absfile="$(realpath $file)"
+    basefile="$(basename $absfile)"
+    echo "Linking ~/.config/$basefile --> $absfile"
+    ln -nfs $absfile ~/.$basefile
+  done
+  popd > /dev/null
+  echo ""
 }
 
 function update_default_shell () {
-
-  let marker='myDotFileMark'
-  if ! grep -q "$marker" ~/.bash_profile; then
+  if ! grep -q "$MARKER" ~/.bash_profile; then
     echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
-    echo ". $(realpath 'zshenv') #$marker" >> ~/.bash_profile
+    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
 }
 
 function install_mac_os_deps() {
   echo "installing MacOS deps..."
+
+  if [[ -f /opt/homebrew/bin/brew ]]; then
+    echo "homebrew already installed. skipping"
+  else 
+    echo "installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zshenv
+  fi
+
+  echo "installing Brewfile formulas..."
+
   # TODO: better handling... externally managed chrome, etc will cause non-zero exit code
   # --no-upgrade will install latest first time but allows rerunning without
   # unexpected major version bumps
-  brew bundle --no-upgrade || true
+  brew bundle --no-upgrade # || true
 }
 
 function install_linux_deps() {
@@ -169,94 +193,30 @@ function install_vim_linux() {
 
 }
 
-function setup_vim () {
-  echo "Setting up neovim..."
-  if [[ -f ~/.local/share/nvim/site/autoload/plug.vim ]]; then
-	  echo "vim already set up. skip"
-	  return 0
-  fi
+# https://github.com/asdf-vm/asdf/issues/841#issuecomment-1636535553
+function asdf_plugin_add () {
+  asdf plugin add "$@" || {
+	  echo "$0;$1;$2"
+    local exit_code=$2
 
-  # for neovim
-  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-  echo "Installing vim plugins..."
-  #nvim --headless +PlugInstall +PlugUpdate +qall
-  #nvim +PlugInstall +PlugUpdate +qall
-  #nvim +CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker +qall
-
-  # neovim - use shared vimrc and runtime paths
-  echo "Setting up init.vim to use shared vim config"
-  mkdir -p ~/.config/nvim
-  cat <<EOF > ~/.config/nvim/init.vim
-  set runtimepath^=~/.vim runtimepath+=~/.vim/after
-  let &packpath=&runtimepath
-  source ~/.vimrc
-EOF
+    # If asdf detects that the plugin is already installed, it prints to standard error,
+    # then exits with a code of 2. We manually check this case, and return 0 so this
+    # this script remains idempotent, especially when `errexit` is set.
+    if ((exit_code == 2)); then
+      return 0
+    else
+      echo "Non-zero exit code while adding plugin: $exit_code"
+      return $exit_code
+    fi
+  }
 }
 
 function setup_asdf () {
-  asdf plugin add nodejs
-  asdf plugin add yarn
-  asdf plugin add python
-  asdf plugin add terraform
-  asdf plugin add go
+	# inspired by: https://github.com/asdf-vm/asdf/issues/240#issuecomment-811629863
+	awk '{print $1 " " $NF}' ~/.tool-versions | sort \
+		| comm -23 - <(asdf plugin list --urls | awk '{print $1 " " $NF}' | sort) \
+		| xargs -t -L1 asdf plugin add
+	asdf install
 }
 
 main
-
-
-#first_time_setup () {
-  ### Nvm, node lts
-  #curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-  #. ~/.bashrc
-  #nvm install lts/*
-
-  ## vim-plug, for vim plugin loading later
-  #curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    #https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-  ##sudo apt-get install neovim
-
-#}
-
-#if ! command -v ngrok 2> /dev/null; then
-  #first_time_setup
-#fi
-
-#if [ "$1" = "fast" ]; then
-  #echo "'fast' specified. Exiting."
-  #exit 0;
-#fi
-
-#echo "Installing nvim CoC extensions"
-
-# Note: extensions are auto updated. However, auto update isn't support for
-# in-line Plug based install via vimrc, so have to install this way :(
-# Also, this hangs at the end :(
-#nvim --headless -c "$(cat <<EOF
-#nvim -c "$(cat <<EOF
-#:CocInstall \
-#coc-tsserver \
-#coc-json \
-#coc-html \
-#coc-yaml \
-#coc-css \
-#coc-python \
-#coc-jest \
-#coc-tslint-plugin \
-#coc-eslint \
-#coc-docker
-#EOF
-#)"
-
-#NVIM_PID=$?
-
-#trap "echo \"Killed NVM PID $NVIM_PID\"" TERM
-
-#echo "Giving Neovim :CocInstall 20 seconds to complete..."
-#sleep 20
-#echo ""
-#echo "Killing install because it hangs indefinitely. Hopefully it finished..."
-#kill $NVIM_PID
-#main

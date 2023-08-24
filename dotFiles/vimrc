@@ -172,7 +172,10 @@ if filereadable(globalIgnore)
 endif
 
 let g:vim_pbcopy_local_cmd='pbcopy'
-set clipboard=unnamedplus
+# Linux
+# set clipboard=unnamedplus
+# MacOS
+set clipboard=unnamed
 
 " highlight character beyond 80 character column
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
