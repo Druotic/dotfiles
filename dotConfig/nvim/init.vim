@@ -1,7 +1,3 @@
-  "set runtimepath^=~/.vim runtimepath+=~/.vim/after
-  "let &packpath=&runtimepath
-  "source ~/.vimrc
-
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -182,10 +178,7 @@ if filereadable(globalIgnore)
 endif
 
 let g:vim_pbcopy_local_cmd='pbcopy'
- "Linux
- "set clipboard=unnamedplus
- "MacOS
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 " highlight character beyond 80 character column
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929

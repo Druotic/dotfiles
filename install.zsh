@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -e
 
 MARKER='myDotFileMark'
@@ -43,7 +43,6 @@ function main () {
   # Non OS-specific tools
   install_antigen
   setup_asdf
-  setup_vim
 
   echo "Install complete!"
 }
@@ -115,7 +114,7 @@ function link_dot_files () {
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
     echo "Linking ~/.config/$basefile --> $absfile"
-    ln -nfs $absfile ~/.$basefile
+    ln -nfs $absfile ~/.config/$basefile
   done
   popd > /dev/null
   echo ""
