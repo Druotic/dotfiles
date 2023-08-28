@@ -41,6 +41,10 @@
 [init]
   defaultBranch = main
 
+[pager]
+  # go back to old behavior of outputting to term
+  branch = false
+
 # Work specific config that's not sensitive. Use top level
 [includeIf "gitdir:~/repos/headspace/"]
   path = .gitconfig-headspace

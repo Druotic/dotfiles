@@ -3,9 +3,26 @@ set -e
 
 MARKER='myDotFileMark'
 DOTFILES_DIR="$(cd $(dirname "$0") && pwd)"
+START_SECS=$(date +%s)
+
+function logd () {
+  if [[ "$@" == "" ]]; then
+    echo
+  else
+    echo "[$(date +'%H:%M:%S') $funcstack[2]] $@"
+  fi
+}
+
+function update_mac_os_sys_prefs () {
+  if [[ "$(defaults read com.apple.dock mru-spaces)" == "1" ]]; then
+    defaults write com.apple.dock mru-spaces -bool false && killall Dock
+  else
+    logd "mru-spaces already disabled. continuing"
+  fi
+}
 
 function main () {
-  echo "Installing..."
+  logd "Installing..."
   link_dot_files
 
   local system="$(uname)"
@@ -15,21 +32,22 @@ function main () {
   [[ $? -eq 0 ]] && local is_wsl=1
   set -e
 
-  echo "uname: ${system}"
+  logd "uname: ${system}"
   case ${system} in
   'Darwin')
-    echo "MacOS detected..."
+    logd "MacOS detected..."
     install_mac_os_deps
+    update_mac_os_sys_prefs
     setup_kitty
     #link_brew_bash # see NOTE
     ;;
   'Linux')
-    echo "Linux detected..."
+    logd "Linux detected..."
     install_linux_deps
     install_vim_linux
 
     if [[ $is_wsl -eq 1 ]]; then
-      echo "TODO. No WSL specific behavior yet..."
+      logd "TODO. No WSL specific behavior yet..."
       # WSL installation - using Windows Terminal
     else
       # Regular linux installation - using Kitty terminal
@@ -37,109 +55,100 @@ function main () {
     fi
     ;;
   *)
-    echo "${system} is not supported yet"
+    logd "${system} is not supported yet"
   esac
 
   # Non OS-specific tools
   install_antigen
   setup_asdf
 
-  echo "Install complete!"
+  logd "Install complete! ($(($(date +%s) - $START_SECS))s)"
 }
 
 function install_antigen () {
-  echo "Installing antigen..."
+  logd "Installing antigen..."
   if [[ ! -f ~/.antigen.zsh ]]; then
     curl -L https://git.io/antigen > ~/.antigen.zsh
   else
-    echo "antigen is already installed. Skipping."
+    logd "antigen is already installed. Skipping."
   fi
 }
 
-# NOTE: not used ATM (as of 7/29/23). Something about sys dirs seems to have
-# changed and made this no longer necessary. Keeping it around until next
-# full reinstall just to be sure.
-function link_brew_bash () {
-  echo "Linking brew version of bash to ~/.local ..."
-  ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
-  sudo ln -nfs "$(brew --prefix bash)/bin/bash" "/usr/local/bin/bash"
-}
-
 function link_dot_files () {
-  echo "Linking dotfiles..."
+  logd "Linking dotfiles..."
 
   pushd dotFiles > /dev/null
   for file in $(ls); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
-    echo "Linking ~/.$basefile --> $absfile"
+    logd "Linking ~/.$basefile --> $absfile"
     ln -nfs $absfile ~/.$basefile
   done
   popd > /dev/null
 
   pushd zsh > /dev/null
-  echo ""
-  echo "Appending to zsh dotfiles so that .zsh* addendums are pulled in..."
+  logd ""
+  logd "Appending to zsh dotfiles so that .zsh* addendums are pulled in..."
 
   set +e # temp disable, grep non-0 for no match
   for file in $(ls); do
     touch ~/.$file
     if ! grep -q "$MARKER" ~/.$file; then
-      echo ". $(realpath $file) #$MARKER" >> ~/.$file
+      logd ". $(realpath $file) #$MARKER" >> ~/.$file
     fi
   done
 
-  echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
+  logd "Appending to .bash_profile to ensure env vars are loaded for bash too..."
   if ! grep -q "$MARKER" ~/.bash_profile; then
-    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
+    logd ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
   set -e
 
   popd > /dev/null
 
-  echo ""
-  echo "Linking scripts"
+  logd ""
+  logd "Linking scripts"
   for file in $(ls -p ./scripts/*); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
     mkdir -p $HOME/.local/bin
-    echo "Linking $HOME/.local/bin/$basefile --> $absfile"
+    logd "Linking $HOME/.local/bin/$basefile --> $absfile"
     ln -nfs $absfile "$HOME/.local/bin/$basefile"
   done
 
-  echo ""
-  echo "Linking ~/.config dirs"
+  logd ""
+  logd "Linking ~/.config dirs"
   pushd dotConfig > /dev/null
   for file in $(ls); do
     absfile="$(realpath $file)"
     basefile="$(basename $absfile)"
-    echo "Linking ~/.config/$basefile --> $absfile"
+    logd "Linking ~/.config/$basefile --> $absfile"
     ln -nfs $absfile ~/.config/$basefile
   done
   popd > /dev/null
-  echo ""
+  logd ""
 }
 
 function update_default_shell () {
   if ! grep -q "$MARKER" ~/.bash_profile; then
-    echo "Appending to .bash_profile to ensure env vars are loaded for bash too..."
-    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
+    logd "Appending to .bash_profile to ensure env vars are loaded for bash too..."
+    logd ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
 }
 
 function install_mac_os_deps() {
-  echo "installing MacOS deps..."
+  logd "installing MacOS deps..."
 
   if [[ -f /opt/homebrew/bin/brew ]]; then
-    echo "homebrew already installed. skipping"
+    logd "homebrew already installed. skipping"
   else 
-    echo "installing Homebrew..."
+    logd "installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zshenv
+    (logd; logd 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zshenv
   fi
 
-  echo "installing Brewfile formulas..."
+  logd "installing Brewfile formulas..."
 
   # TODO: better handling... externally managed chrome, etc will cause non-zero exit code
   # --no-upgrade will install latest first time but allows rerunning without
@@ -148,7 +157,7 @@ function install_mac_os_deps() {
 }
 
 function install_linux_deps() {
-  echo "installing linux deps..."
+  logd "installing linux deps..."
   sudo apt update
 
   sudo apt-get install -y \
@@ -165,7 +174,7 @@ function install_linux_deps() {
 }
 
 function setup_kitty () {
-  echo 'installing Kitty...'
+  logd 'installing Kitty...'
   if [[ ! -L ~/.local/bin/kitty ]]; then
 	  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
@@ -176,18 +185,18 @@ function setup_kitty () {
 	  # re-enable if necessary
 	  #cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
   else
-	  echo "kitty already installed. skip"
+	  logd "kitty already installed. skip"
   fi
 }
 
 function install_vim_linux() {
-  echo "install neovim appimage..."
+  logd "install neovim appimage..."
   if [[ ! -f ~/nvim.appimage ]]; then
 	  curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
 	  mv nvim.appimage $HOME
 	  chmod u+x ~/nvim.appimage
   else
-	  echo "neovim already installed. skip"
+	  logd "neovim already installed. skip"
   fi
 
 }
@@ -195,7 +204,7 @@ function install_vim_linux() {
 # https://github.com/asdf-vm/asdf/issues/841#issuecomment-1636535553
 function asdf_plugin_add () {
   asdf plugin add "$@" || {
-	  echo "$0;$1;$2"
+	  logd "$0;$1;$2"
     local exit_code=$2
 
     # If asdf detects that the plugin is already installed, it prints to standard error,
@@ -204,7 +213,7 @@ function asdf_plugin_add () {
     if ((exit_code == 2)); then
       return 0
     else
-      echo "Non-zero exit code while adding plugin: $exit_code"
+      logd "Non-zero exit code while adding plugin: $exit_code"
       return $exit_code
     fi
   }
@@ -218,4 +227,19 @@ function setup_asdf () {
 	asdf install
 }
 
+# NOTE: not used ATM (as of 7/29/23). Something about sys dirs seems to have
+# changed and made this no longer necessary. Keeping it around until next
+# full reinstall just to be sure.
+function link_brew_bash () {
+  logd "Linking brew version of bash to ~/.local ..."
+  ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
+  sudo ln -nfs "$(brew --prefix bash)/bin/bash" "/usr/local/bin/bash"
+}
+
+function tech_debt_reminder () {
+  echo "\nWARN: reminder to revisit tech debt:"
+  echo "- (7/29/23) Brew bash version linking, waiting till next fresh full-install. See link_brew_bash."
+}
+
 main
+tech_debt_reminder
