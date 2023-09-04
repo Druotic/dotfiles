@@ -1,7 +1,6 @@
-Super naive install script, links all files/directories to ~/.fileName
-excluding README.md and install.sh
+My dotfiles, scripts, installer, and a bunch of other stuff I use. WIP
 
-* yarn
-* . ./install.sh # must use dot execution for sourcing to work properly
-* open vim, :PlugInstall
-* run ./install.sh again (otherwise complains about onedark theme, among other things)
+```
+yarn
+./install.zsh
+```
