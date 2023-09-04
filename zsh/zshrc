@@ -115,7 +115,7 @@ alias audio_set_output='SwitchAudioSource -t output -s'
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-fpath=(~/.zsh $fpath)
+#fpath=(~/.zsh $fpath)
 
 # History
 ## Appends every command to the history file once it is executed
@@ -133,11 +133,15 @@ bindkey "^R" history-incremental-search-backward
 
 #set_active_audio_devices
 
-# load antigen
+#export ANTIGEN_LOG=~/repos/dotfiles/antigen.out
 source ~/.antigen.zsh
-
-# load antigen config and put executables in path
 antigen init ~/.antigenrc
+
+# For some reason, apply inside of antigenrc doesn't stick and
+# leaves .lock file
+#antigen apply
+
+
 if [[ "$(uname)" = 'Linux' ]]; then
   # linux uses portable appimage
   alias nvim='~/nvim.appimage'

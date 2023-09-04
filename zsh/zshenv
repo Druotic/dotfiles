@@ -2,6 +2,10 @@
 # signing
 export GPG_TTY="$(tty)"
 
+# disable using zwc 'compiled' zshrc to avoid unexpected divergence...
+# oh-my-zsh will enable this by default annoyingly
+export ZSH_DISABLE_COMPFIX=true
+
 export AWS_SDK_LOAD_CONFIG=1
 export AWS_DEFAULT_PROFILE=foo
 
@@ -27,8 +31,8 @@ export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
 
 export HISTFILE=~/.zhistory
-export HISTSIZE=10000
-export SAVEHIST=10000
+export HISTSIZE=100000
+export SAVEHIST=100000
 
 #TODO: why did I add this?
 # export PS1="%n@%M--%2C%# "
