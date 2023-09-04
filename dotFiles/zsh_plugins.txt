@@ -1,0 +1,18 @@
+# note: 'kind:fpath' only loads completions, no aliases
+
+# OMZ plugins
+ohmyzsh/ohmyzsh path:lib
+ohmyzsh/ohmyzsh path:plugins/git kind:fpath
+ohmyzsh/ohmyzsh path:plugins/terraform kind:fpath
+ohmyzsh/ohmyzsh path:plugins/docker kind:fpath
+ohmyzsh/ohmyzsh path:plugins/thefuck kind:fpath
+ohmyzsh/ohmyzsh path:plugins/asdf kind:fpath
+ohmyzsh/ohmyzsh path:plugins/command-not-found kind:fpath
+
+# Select theme
+ChesterYue/ohmyzsh-theme-passion
+
+# lightweight plugins
+zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting

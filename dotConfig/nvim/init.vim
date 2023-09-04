@@ -161,7 +161,7 @@ let g:jsdoc_input_description = 1
 "
 " Add all gitignore entries to wildignore
 " Ref: https://github.com/vim-scripts/gitignore
-let globalIgnore = '/Users/druotic/.gitignore'
+let globalIgnore = '~/.gitignore'
 if filereadable(globalIgnore)
     let igstring = ''
     for oline in readfile(globalIgnore)

@@ -1,6 +1,8 @@
+brew "antidote"
 brew "asdf"
 brew "awscli"
 brew "bash"
+# docker desktop / podman / minikube / etc alternative
 brew "colima"
 brew "coreutils"
 brew "curl"

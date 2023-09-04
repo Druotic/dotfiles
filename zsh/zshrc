@@ -1,5 +1,9 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# pre-load for antidote/zsh plugin management
+autoload -Uz compinit
+compinit
+
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias git-rm-remote-tag="git push --delete origin"
 
@@ -133,14 +137,9 @@ bindkey "^R" history-incremental-search-backward
 
 #set_active_audio_devices
 
-#export ANTIGEN_LOG=~/repos/dotfiles/antigen.out
-source ~/.antigen.zsh
-antigen init ~/.antigenrc
-
-# For some reason, apply inside of antigenrc doesn't stick and
-# leaves .lock file
-#antigen apply
-
+# load zsh lplugins (~/.zsh_plugins.txt)
+source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+antidote load
 
 if [[ "$(uname)" = 'Linux' ]]; then
   # linux uses portable appimage
@@ -156,8 +155,3 @@ if [[ "$(uname)" = 'Linux' ]]; then
     sudo apt-get purge $(dpkg -l linux-{image,headers}-"[0-9]*" | awk '/ii/{print $2}' | grep -ve "$(uname -r | sed -r 's/-[a-z]+//')")
   }
 fi
-
-# TODO: remove this and adopt zsh theme
-alias ls='ls -lGH --color=auto'
-# Zsh to use the same colors as ls
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
