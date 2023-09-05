@@ -14,11 +14,9 @@ function logd () {
 }
 
 function update_mac_os_sys_prefs () {
-  if [[ "$(defaults read com.apple.dock mru-spaces)" == "1" ]]; then
-    defaults write com.apple.dock mru-spaces -bool false && killall Dock
-  else
-    logd "mru-spaces already disabled. continuing"
-  fi
+  defaults write com.apple.dock mru-spaces -bool false
+  defaults write com.apple.dock autohide -bool true
+  killall Dock
 }
 
 function main () {
@@ -39,7 +37,6 @@ function main () {
     install_mac_os_deps
     update_mac_os_sys_prefs
     setup_kitty
-    #link_brew_bash # see NOTE
     ;;
   'Linux')
     logd "Linux detected..."
@@ -94,13 +91,13 @@ function link_dot_files () {
   for file in $(ls); do
     touch ~/.$file
     if ! grep -q "$MARKER" ~/.$file; then
-      logd ". $(realpath $file) #$MARKER" >> ~/.$file
+      echo ". $(realpath $file) #$MARKER" >> ~/.$file
     fi
   done
 
   logd "Appending to .bash_profile to ensure env vars are loaded for bash too..."
   if ! grep -q "$MARKER" ~/.bash_profile; then
-    logd ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
+    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
   set -e
 
@@ -118,6 +115,7 @@ function link_dot_files () {
 
   logd ""
   logd "Linking ~/.config dirs"
+  mkdir -p ~/.config
   pushd dotConfig > /dev/null
   for file in $(ls); do
     absfile="$(realpath $file)"
@@ -132,7 +130,7 @@ function link_dot_files () {
 function update_default_shell () {
   if ! grep -q "$MARKER" ~/.bash_profile; then
     logd "Appending to .bash_profile to ensure env vars are loaded for bash too..."
-    logd ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
+    echo ". $(realpath 'zshenv') #$MARKER" >> ~/.bash_profile
   fi
 }
 
@@ -227,18 +225,9 @@ function setup_asdf () {
 	asdf install
 }
 
-# NOTE: not used ATM (as of 7/29/23). Something about sys dirs seems to have
-# changed and made this no longer necessary. Keeping it around until next
-# full reinstall just to be sure.
-function link_brew_bash () {
-  logd "Linking brew version of bash to ~/.local ..."
-  ln -nfs "$(brew --prefix bash)/bin/bash" ~/.local/bin/bash
-  sudo ln -nfs "$(brew --prefix bash)/bin/bash" "/usr/local/bin/bash"
-}
-
 function tech_debt_reminder () {
   echo "\nWARN: reminder to revisit tech debt:"
-  echo "- (7/29/23) Brew bash version linking, waiting till next fresh full-install. See link_brew_bash."
+  echo "- (9/4/23) Need to remove linux specific bits"
 }
 
 main

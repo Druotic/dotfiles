@@ -1,0 +1,11 @@
+[user]
+  user = druotic
+  name = James Beavers
+  email = james.beavers@jupiterone.com
+  signingkey = 9A8FEA89766135B9
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[gpg]
+  program = gpg

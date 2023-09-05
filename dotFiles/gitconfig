@@ -24,7 +24,7 @@
   excludesfile = ~/.gitignore
   ignorecase = false
   editor = nvim
-  ;hooksPath = ~/.git-templates/hooks
+  hooksPath = ~/.git-templates/hooks
 
 [push]
   default = current
@@ -46,5 +46,5 @@
   branch = false
 
 # Work specific config that's not sensitive. Use top level
-[includeIf "gitdir:~/repos/headspace/"]
-  path = .gitconfig-headspace
+[includeIf "gitdir:~/repos/j1/"]
+  path = .gitconfig-j1
