@@ -11,7 +11,13 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install --frozen-lockfile --production',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+" replace with telescope
 Plug 'mileszs/ack.vim'
+
+" required dep for telescope
+Plug 'nvim-lua/plenary.nvim'
+" file fuzzy search
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.5' }
 Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -77,19 +83,20 @@ set signcolumn=yes
 " use new window/buffer, split vertically (e.g. ack, fzf, but NOT nerdtree)
 set switchbuf=vsplit
 
+" coc trigger refresh/autocompletion manually (insert mode)
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <expr> <Enter> coc#pum#visible() ? coc#pum#confirm() : "\<Enter>"
 
 " Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nnoremap <silent> [c <Plug>(coc-diagnostic-prev)
+nnoremap <silent> ]c <Plug>(coc-diagnostic-next)
 
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nnoremap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gy <Plug>(coc-type-definition)
+nnoremap <silent> gi <Plug>(coc-implementation)
+nnoremap <silent> gr <Plug>(coc-references)
 
-nmap <leader>rn <Plug>(coc-rename)
+nnoremap <leader>rn <Plug>(coc-rename)
 " --- end COC config ---
 
 set wildmode=longest,list,full
@@ -124,23 +131,23 @@ colorscheme onedark
 set wildignore+=*/package-lock.json
 
 " search for text globally
-map <c-f> :Grepper<Enter>
+nnomap <c-f> :Grepper<Enter>
 " :Ack! 
 " fuzzy search for files
-map <c-p> :Files<CR>
+nnomap <c-p> :Files<CR>
 "map <c-p> :call fzf#run({ 'source': 'ag -g ""', 'sink': 'e', 'window': 'enew' }) <enter>
 " file tree
-map <c-n> :NERDTreeToggle <enter>
+nnomap <c-n> :NERDTreeToggle <enter>
 
 " leader maps
 let mapleader = ','
-nmap <leader>n :NERDTreeFind <enter>
-nmap <leader>m <Plug>MarkdownPreview
-nmap <leader>j <Plug>(jsdoc)
-vmap <leader>j :!python -m json.tool <enter>
-vmap <leader>jc :!python -m json.tool --compact<enter>
-"nmap <leader>s :SyntasticCheck <enter>
-"nmap <leader>sd :SyntasticReset <enter>
+nnoremap <leader>n :NERDTreeFind <enter>
+nnoremap <leader>m <Plug>MarkdownPreview
+nnoremap <leader>j <Plug>(jsdoc)
+vnoremap <leader>j :!python -m json.tool <enter>
+vnoremap <leader>jc :!python -m json.tool --compact<enter>
+"nnoremap <leader>s :SyntasticCheck <enter>
+"nnoremap <leader>sd :SyntasticReset <enter>
 
 " Use silver searcher with ack/fzf
 let g:grepper = { 'tools': ['rg'] }
