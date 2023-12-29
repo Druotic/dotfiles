@@ -54,7 +54,7 @@ cask "slack"
 cask "spotify"
 cask "zoom"
 tap "homebrew/bundle"
-tap "homebrew/cask"
+#tap "homebrew/cask" # errored, eventually re-add?
 tap "homebrew/cask-versions"
-tap "homebrew/core"
-tap "withgraphite/tap/graphite"
+#tap "homebrew/core" # errored, eventuall re-add?
+brew "withgraphite/tap/graphite"
