@@ -1,1 +1,2 @@
-legacy_version_file = yes
+# ran into some issues with .node-version specifying major only. Disable for now
+legacy_version_file = no

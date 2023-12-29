@@ -24,7 +24,7 @@
   excludesfile = ~/.gitignore
   ignorecase = false
   editor = nvim
-  hooksPath = ~/.git-templates/hooks
+#  hooksPath = ~/.git-templates/hooks
 
 [push]
   default = current
@@ -45,6 +45,9 @@
   # go back to old behavior of outputting to term
   branch = false
 
+;[url "git@github.com:"]
+  ;insteadOf = https://github.com/
+
 # Work specific config that's not sensitive. Use top level
-[includeIf "gitdir:~/repos/j1/"]
+[includeIf "gitdir:~/repos/JupiterOne/"]
   path = .gitconfig-j1

@@ -10,7 +10,7 @@ execute_local_hook () {
   LOCAL_HOOK="$LOCAL_PROJECT_ROOT/.git/hooks/$HOOK_NAME"
   if [[ -f "$LOCAL_HOOK" ]]; then
       eval "$LOCAL_HOOK $@"
-  #else
-    #echo "WARNING: $LOCAL_HOOK not found. Skipping."
+  else
+    echo "WARNING: $LOCAL_HOOK not found. Skipping."
   fi
 }

@@ -6,8 +6,14 @@ export GPG_TTY="$(tty)"
 # oh-my-zsh will enable this by default annoyingly
 export ZSH_DISABLE_COMPFIX=true
 
-export AWS_SDK_LOAD_CONFIG=1
-export AWS_DEFAULT_PROFILE=foo
+export AWS_DEFAULT_REGION='us-east-1'
+
+# enabling this was causing issues with saml2aws login: source profile not 
+# having credentials or something to that affect... not totally sure. This
+# being disabled will likely cause issues later
+#export AWS_SDK_LOAD_CONFIG=1
+export AWS_DEFAULT_PROFILE=jupiterone-dev
+export SAML2AWS_PROFILE=jupiterone
 
 # https://github.com/kennyp/asdf-golang#version-selection
 export ASDF_GOLANG_MOD_VERSION_ENABLED=true
@@ -18,6 +24,8 @@ export PATH=${PATH}:/opt/homebrew/bin
 export PATH="$(go env GOPATH)/bin:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
+# breaks asdf?
+export PATH="$PATH:$(yarn global bin)"
 
 export ANDROID_HOME=${HOME}/android-sdk
 export PATH=${PATH}:${ANDROID_HOME}/emulator
@@ -30,9 +38,9 @@ export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 #export DOCKER_HOST=unix:///run/user/1000/docker.sock
 export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
 
-export HISTFILE=~/.zhistory
-export HISTSIZE=100000
-export SAVEHIST=100000
+# Handled by OMZsh now (HISTFILE=/.zsh_history)
+# export HISTSIZE=100000 (50k OMZsh default)
+# export SAVEHIST=100000 (10k OMZsh default
 
 #TODO: why did I add this?
 # export PS1="%n@%M--%2C%# "
@@ -42,3 +50,10 @@ export SAVEHIST=100000
 # hide computer name
 
 export EDITOR=/opt/homebrew/bin/nvim
+
+# TODO: Disable installing husky hooks. Global hook will execute local hooks
+# programmatically. Re-enabled for now.. need to figure out a better hybrid
+# approach
+export HUSKY=1
+
+export AWS_PAGER=""

@@ -8,17 +8,45 @@ alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(
 alias git-rm-remote-tag="git push --delete origin"
 
 alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
-
-alias ds='docker stop -t 3 $(docker ps -aq)'
 alias untgz='tar -xvzf'
 
 alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
-alias cdh='cd ~/repos/headspace/'
-alias cdo='cd ~/repos/other/'
+alias cdj='cd ~/repos/JupiterOne/'
+alias cdp='cd ~/repos/public/'
+alias cdd='cd ~/repos/public/dotfiles/'
+alias cdq='cd ~/repos/JupiterOne/query-language/'
+alias zshrc='vim ~/repos/public/dotfiles/zsh/zshrc'
+alias gitsb='git checkout main && git pull origin main && git checkout - && git merge main && git push origin'
 
 alias vim=nvim
+alias gremlin='~/.apache-tinkerpop-gremlin-console-3.6.5/bin/gremlin.sh'
+
+ds () {
+  FLAG=$1
+  CONTAINERS="$(docker ps -aq)"
+  if [[ -n "$CONTAINERS" ]]; then
+    docker stop -t 3 "$CONTAINERS"
+    docker rm "$CONTAINERS"
+  fi
+
+  if  [[ $FLAG == '--remove' ]]; then
+    docker system prune --volumes -a
+    #colima restart --force
+  fi
+}
+
+dockerPrune () {
+  ds --remove
+  docker volume prune -a -f
+  docker system prune -f
+}
+clone-org-gh-repos () {
+  gh repo list JupiterOne --limit 1000 | while read -r repo _; do
+    gh repo clone "$repo" "$repo"
+  done
+}
 
 unlinkPackage () {
   echo "Unlinking $1..."
@@ -57,7 +85,7 @@ repeat-it-count-failures () {
   echo "Executing the following command $COUNT times: '$CMD'"
   for i in `seq 1 $COUNT`
   do
-    echo "Starting run #${i}..."
+    echo "Starting run #${i} (${FAIL_COUNT}/${i} failed so far)..."
     eval "$CMD"
     if [[ $? == 1 ]]; then
       echo "Failure detected in run #${i}"
@@ -95,6 +123,14 @@ reload_audio () {
   sudo pkill coreaudiod
 }
 
+npm_reauth_ro () {
+  npm login
+  npm token create --read-only
+  npm token list
+  echo "revoke all other tokens with 'npm token revoke <blah>'"
+  echo "then copy the above token into ~./npmrc"
+}
+
 alias audio_get_inputs='SwitchAudioSource -t input -a'
 alias audio_set_input='SwitchAudioSource -t input -s'
 alias audio_get_outputs='SwitchAudioSource -t output -a'
@@ -121,12 +157,12 @@ alias audio_set_output='SwitchAudioSource -t output -s'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 #fpath=(~/.zsh $fpath)
 
-# History
+# History - handled by OMZsh now
 ## Appends every command to the history file once it is executed
-setopt inc_append_history
+#setopt inc_append_history
 ## Reloads the history whenever you use it
-setopt share_history
-setopt hist_ignore_all_dups inc_append_history
+#setopt share_history
+#setopt hist_ignore_all_dups inc_append_history
 
 # ctrl+left
 bindkey "^[[1;5D" backward-word
