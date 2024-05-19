@@ -12,21 +12,19 @@ vim.g.mapleader = ','
 -----------------------------------------------------------
 
 --" coc trigger refresh/autocompletion manually (insert mode)
---inoremap <silent><expr> <c-space> coc#refresh()
---inoremap <expr> <Enter> coc#pum#visible() ? coc#pum#confirm() : "\<Enter>"
+map('i', '<c-space>', 'coc#refresh()', { expr = true })
+map('i', '<CR>', 'coc#pum#visible() ? coc#pum#confirm() : "\\<CR>"', { expr = true })
 
 --" Use `[c` and `]c` to navigate diagnostics
---nnoremap <silent> [c <Plug>(coc-diagnostic-prev)
---nnoremap <silent> ]c <Plug>(coc-diagnostic-next)
+map('n', '[c', '<Plug>(coc-diagnostic-prev)')
+map('n', ']c', '<Plug>(coc-diagnostic-next)')
 
---nnoremap <silent> gd <Plug>(coc-definition)
---nnoremap <silent> gy <Plug>(coc-type-definition)
---nnoremap <silent> gi <Plug>(coc-implementation)
---nnoremap <silent> gr <Plug>(coc-references)
+map('n', 'gd', '<Plug>(coc-definition)')
+map('n', 'gy', '<Plug>(coc-type-definition)')
+map('n', 'gi', '<Plug>(coc-implementation)')
+map('n', 'gr', '<Plug>(coc-references)')
 
---nnoremap <leader>rn <Plug>(coc-rename)
-
-
+map('n', '<leader>rn', '<Plug>(coc-rename)')
 
 -----------------------------------------------------------
 -- Vanilla Neovim

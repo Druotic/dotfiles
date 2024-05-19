@@ -36,7 +36,7 @@ export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 # needed for rootless
 # https://docs.docker.com/engine/security/rootless/
 #export DOCKER_HOST=unix:///run/user/1000/docker.sock
-export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+#export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
 
 # Handled by OMZsh now (HISTFILE=/.zsh_history)
 # export HISTSIZE=100000 (50k OMZsh default)

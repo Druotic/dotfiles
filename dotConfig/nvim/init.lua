@@ -57,7 +57,7 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-  autocmd VimEnter * CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-tslint-plugin coc-eslint coc-docker --sync
+  autocmd VimEnter * CocInstall coc-json coc-tsserver coc-html coc-python coc-jest coc-sh coc-eslint coc-docker coc-prettier --sync
 endif
 
 set wildignore+=*/package-lock.json

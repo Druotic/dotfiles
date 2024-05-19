@@ -3,9 +3,9 @@
 vim.g.ale_fixers = { 'prettier', 'eslint' }
 -- Equivalent to the above.
 --let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
-vim.g.ale_fix_on_save = '1'
+vim.g.ale_fix_on_save = true
 
---vim.g.coc_disable_startup_warning = 1
+--vim.g.coc_disable_startup_warning = true
 
 -- Use silver searcher with ack/fzf
 vim.g.grepper = { tools = { 'rg' } }
@@ -14,8 +14,8 @@ vim.fn.setenv('FZF_DEFAULT_COMMAND', 'rg --files')
 -- vim-move ctrl+j, ctrl+k to move line
 vim.g.move_key_modifier = 'c'
 
-vim.g.NERDTreeRespectWildIgnore = '1'
-vim.g.NERDTreeShowHidden = '1'
+vim.g.NERDTreeRespectWildIgnore = true
+vim.g.NERDTreeShowHidden = true
 
 -- open markdown preview in chrome
 vim.g.mkdp_path_to_chrome = 'open -a Google\\ Chrome'
@@ -24,8 +24,8 @@ vim.g.mkdp_path_to_chrome = 'open -a Google\\ Chrome'
 vim.g.ctrlp_working_path_mode = 'r'
 
 -- vim-jsdoc
-vim.g.jsdoc_allow_input_prompt = '1'
-vim.g.jsdoc_input_description = '1'
+vim.g.jsdoc_allow_input_prompt = true
+vim.g.jsdoc_input_description = true
 
 -- https://github.com/vim-airline/vim-airline/blob/master/doc/airline.txt#L392
 -- Show parent of parent directory name up to 20 chars. E.g. 'lifeomic',
@@ -68,15 +68,15 @@ vim.o.clipboard = 'unnamedplus'
 vim.o.shell = 'zsh'
 
 -- soft tabs, 2 spaces, show line numbers, 80 width col
-vim.o.tabstop = '2'
-vim.o.softtabstop = '2'
-vim.o.shiftwidth = '2'
-vim.o.expandtab = '1'
-vim.o.number = '1'
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.o.number = true
 vim.o.colorcolumn = '80'
 
 -- cursor line highlighting
-vim.o.cursorline = '1'
+vim.o.cursorline = true
 -- backspace works across lines and between edit - less flipping between
 -- insert/normal
 vim.o.backspace = 'indent,eol,start'
@@ -84,11 +84,11 @@ vim.o.backspace = 'indent,eol,start'
 vim.cmd('syntax on')
 
 -- --- begin COC config ---
-vim.o.hidden = '1'
-vim.o.nobackup = '1'
-vim.o.nowritebackup = '1'
-vim.o.cmdheight = '2'
-vim.o.updatetime = '300'
+vim.o.hidden = true
+vim.o.nobackup = true
+vim.o.nowritebackup = true
+vim.o.cmdheight = 2
+vim.o.updatetime = 300
 vim.o.shortmess = vim.o.shortmess .. 'c'
 vim.o.signcolumn = 'yes'
 
@@ -98,7 +98,7 @@ vim.o.switchbuf = 'vsplit'
 -- --- end COC config ---
 
 vim.o.wildmode = 'longest,list,full'
-vim.o.wildmenu = '1'
+vim.o.wildmenu = true
 
 -- show all other types of whitespace besides plain space
 
@@ -111,7 +111,8 @@ vim.cmd('colorscheme onedark')
 
 -- highlight character beyond 80 character column
 --vim.o.highlight = 'OverLength ctermbg=red ctermfg=white guibg=#592929'
-vim.api.nvim_command('highlight OverLength ctermbg=red ctermfg=white guibg=#592929')
+--vim.api.nvim_command('highlight OverLength ctermbg=red ctermfg=white guibg=#592929')
+vim.cmd('highlight OverLength ctermbg=red ctermfg=white guibg=#592929')
 vim.o.match = 'OverLength /\\%81v.\\+/'
 
 --"set statusline+=%#warningmsg#

@@ -17,21 +17,45 @@ alias cdj='cd ~/repos/JupiterOne/'
 alias cdp='cd ~/repos/public/'
 alias cdd='cd ~/repos/public/dotfiles/'
 alias cdq='cd ~/repos/JupiterOne/query-language/'
+alias cdc='cd $(ls -d ~/repos/JupiterOne-clone-* | sort | tail -n 1); cd JupiterOne'
 alias zshrc='vim ~/repos/public/dotfiles/zsh/zshrc'
 alias gitsb='git checkout main && git pull origin main && git checkout - && git merge main && git push origin'
 
 alias vim=nvim
 alias gremlin='~/.apache-tinkerpop-gremlin-console-3.6.5/bin/gremlin.sh'
 
+alias nr='npm run'
+
+updateAll () {
+  # alectrona
+  sudo patch update-all
+}
+
+recoverNRDashboard () {
+  curl -X POST https://api.newrelic.com/graphql \
+       -H 'Content-Type: application/json' \
+       -H "API-Key: $NR_API_KEY" \
+       -d "{ \
+    \"mutation\": \"{ \
+      dashboardUndelete(guid: "$1") { \
+        errors { \
+          description \
+          type \
+        } \
+      } \
+    }\" \
+  }"
+}
+
 ds () {
-  FLAG=$1
-  CONTAINERS="$(docker ps -aq)"
-  if [[ -n "$CONTAINERS" ]]; then
-    docker stop -t 3 "$CONTAINERS"
-    docker rm "$CONTAINERS"
+  FLAG="$1"
+  CONTAINERS=($(docker ps -aq))
+  if [ ${#CONTAINERS[@]} -gt 0 ]; then
+    docker stop -t 3 "${CONTAINERS[@]}"
+    docker rm "${CONTAINERS[@]}"
   fi
 
-  if  [[ $FLAG == '--remove' ]]; then
+  if  [[ "$FLAG" == '--remove' ]]; then
     docker system prune --volumes -a
     #colima restart --force
   fi
@@ -42,10 +66,17 @@ dockerPrune () {
   docker volume prune -a -f
   docker system prune -f
 }
+
 clone-org-gh-repos () {
+  local clone_dir="JupiterOne-clone-$(date '+%Y-%m-%d_%H.%M.%S')"
+  pushd ~/repos
+  mkdir $clone_dir
+  pushd $clone_dir
   gh repo list JupiterOne --limit 1000 | while read -r repo _; do
     gh repo clone "$repo" "$repo"
   done
+  popd
+  popd
 }
 
 unlinkPackage () {
@@ -124,11 +155,15 @@ reload_audio () {
 }
 
 npm_reauth_ro () {
-  npm login
+  npm login --auth-type legacy
   npm token create --read-only
   npm token list
   echo "revoke all other tokens with 'npm token revoke <blah>'"
   echo "then copy the above token into ~./npmrc"
+}
+
+git_sync_upstream () {
+  git checkout main && git pull origin main && git checkout - && git rebase main
 }
 
 alias audio_get_inputs='SwitchAudioSource -t input -a'

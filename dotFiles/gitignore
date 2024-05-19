@@ -80,3 +80,7 @@ tags
 dist/
 
 .local_only/
+
+# Explicit allowlist so that search doesn't exclude these dotfiles
+!.github/
+!.eslint*
