@@ -26,6 +26,12 @@ alias gremlin='~/.apache-tinkerpop-gremlin-console-3.6.5/bin/gremlin.sh'
 
 alias nr='npm run'
 
+alias neo4j_redact_from_pbpaste='pbpaste | sed -E '\''s/\$param[0-9]+/"REDACTED"/g'\'''
+
+#alias neo4j_redact_from_pbpaste='pbpaste | sed -E "s/\\$param[0-9]+/\"REDACTED\"/g"'
+#alias neo4j_redact_from_pbpaste='pbpaste | sed -E "s/\$param[0-9]+/"REDACTED"/g'
+#alias neo4j_redact_from_pbpaste='pbpaste | sed -E "s/\$param[0-9]+/REDACTED/g" | pbcopy'
+
 updateAll () {
   # alectrona
   sudo patch update-all
@@ -64,7 +70,7 @@ ds () {
 dockerPrune () {
   ds --remove
   docker volume prune -a -f
-  docker system prune -f
+  docker system prune -a -f
 }
 
 clone-org-gh-repos () {
