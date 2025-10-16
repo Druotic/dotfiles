@@ -1,9 +1,17 @@
+-- Disable annoying sql completion that breaks atm
+-- https://www.reddit.com/r/neovim/comments/x2nc8o/cant_disable_sql_omni_complete_in_neovim_072/
+vim.g.omni_sql_no_default_maps = 1
+
+vim.lsp.set_log_level("debug")
 
 -- Fix files with prettier, and then ESLint.
 vim.g.ale_fixers = { 'prettier', 'eslint' }
 -- Equivalent to the above.
 --let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
-vim.g.ale_fix_on_save = true
+vim.g.ale_fix_on_save = false
+
+vim.g.github_enterprise_urls = {'<REDACTED>'}
+
 
 --vim.g.coc_disable_startup_warning = true
 
@@ -27,6 +35,9 @@ vim.g.ctrlp_working_path_mode = 'r'
 vim.g.jsdoc_allow_input_prompt = true
 vim.g.jsdoc_input_description = true
 
+
+vim.g['airline#extensions#coc#enabled'] = 1
+vim.g['airline#extensions#coc#show_coc_status'] = 1
 -- https://github.com/vim-airline/vim-airline/blob/master/doc/airline.txt#L392
 -- Show parent of parent directory name up to 20 chars. E.g. 'lifeomic',
 -- 'lifeomic-clone', etc to make working with multiple copies of the same project
@@ -47,7 +58,7 @@ vim.g.airline_section_b = '%{fnamemodify(expand("%:p:h"), ":t")}/'
 vim.g.airline_section_c = '%t'
 --vim.g.airline_section_c       (bufferline or filename, readonly)
 --vim.g.airline_section_gutter  (csv)
-vim.g.airline_section_x = ''
+vim.g.airline_section_x = ' %{coc#status()}'
 --vim.g.airline_section_x       (tagbar, filetype, virtualenv)
 vim.g.airline_section_y = ''
 --vim.g.airline_section_y       (fileencoding, fileformat, 'bom', 'eol')
@@ -85,8 +96,10 @@ vim.cmd('syntax on')
 
 -- --- begin COC config ---
 vim.o.hidden = true
-vim.o.nobackup = true
-vim.o.nowritebackup = true
+
+-- missing opts...
+--vim.o.nobackup = true
+--vim.o.nowritebackup = true
 vim.o.cmdheight = 2
 vim.o.updatetime = 300
 vim.o.shortmess = vim.o.shortmess .. 'c'
@@ -113,7 +126,9 @@ vim.cmd('colorscheme onedark')
 --vim.o.highlight = 'OverLength ctermbg=red ctermfg=white guibg=#592929'
 --vim.api.nvim_command('highlight OverLength ctermbg=red ctermfg=white guibg=#592929')
 vim.cmd('highlight OverLength ctermbg=red ctermfg=white guibg=#592929')
-vim.o.match = 'OverLength /\\%81v.\\+/'
+
+-- missing opt...
+--vim.o.match = 'OverLength /\\%81v.\\+/'
 
 --"set statusline+=%#warningmsg#
 --"set statusline+=%{SyntasticStatuslineFlag()}

@@ -21,6 +21,7 @@ function update_mac_os_sys_prefs () {
 
 function main () {
   logd "Installing..."
+  setup_nodejs
   link_dot_files
 
   local system="$(uname)"
@@ -57,7 +58,6 @@ function main () {
 
   # Non OS-specific tools
   install_antigen
-  setup_asdf
 
   logd "Install complete! ($(($(date +%s) - $START_SECS))s)"
 }
@@ -148,10 +148,13 @@ function install_mac_os_deps() {
 
   logd "installing Brewfile formulas..."
 
+  set +e
   # TODO: better handling... externally managed chrome, etc will cause non-zero exit code
   # --no-upgrade will install latest first time but allows rerunning without
   # unexpected major version bumps
   brew bundle --no-upgrade # || true
+  set -e
+  echo "brew bundle succeeded"
 }
 
 function install_linux_deps() {
@@ -197,6 +200,21 @@ function install_vim_linux() {
 	  logd "neovim already installed. skip"
   fi
 
+}
+
+function setup_nodejs () {
+  if [ ! -d "$HOME/.nvm" ]; then
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  fi
+
+  # Load NVM (this will be necessary for the current session)
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  # Install Node.js LTS version
+  nvm install --lts
+
+  # Set the installed version as the default
+  nvm alias default node
 }
 
 # https://github.com/asdf-vm/asdf/issues/841#issuecomment-1636535553

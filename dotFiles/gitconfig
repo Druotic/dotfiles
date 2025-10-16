@@ -33,10 +33,10 @@
   # forced to add this after git upgrade to avoid warnings (this is the default)
   rebase = false
 
-[user]
-  user = Druotic
-  name = James Beavers
-  email = jamesjbeavers@gmail.com
+;[user]
+  ;user = Druotic
+  ;name = James Beavers
+  ;email = jamesjbeavers@gmail.com
 
 [init]
   defaultBranch = main
@@ -49,5 +49,10 @@
   ;insteadOf = https://github.com/
 
 # Work specific config that's not sensitive. Use top level
-[includeIf "gitdir:~/repos/JupiterOne/"]
-  path = .gitconfig-j1
+[includeIf "gitdir:~/repos/stokespace/"]
+  path = .gitconfig-stokespace
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

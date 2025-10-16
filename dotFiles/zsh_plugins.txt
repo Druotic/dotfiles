@@ -6,7 +6,7 @@ ohmyzsh/ohmyzsh path:plugins/git kind:fpath
 ohmyzsh/ohmyzsh path:plugins/terraform kind:fpath
 ohmyzsh/ohmyzsh path:plugins/docker kind:fpath
 ohmyzsh/ohmyzsh path:plugins/thefuck kind:fpath
-ohmyzsh/ohmyzsh path:plugins/asdf kind:fpath
+#ohmyzsh/ohmyzsh path:plugins/asdf kind:fpath
 ohmyzsh/ohmyzsh path:plugins/command-not-found kind:fpath
 
 druotic/zsh-utils path:themes/passionate-magic.zsh-theme

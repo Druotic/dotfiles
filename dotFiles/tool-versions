@@ -1,5 +1,5 @@
 yarn 1.22.10
-python 3.10.2
+python 3.12.3
 terraform 1.4.4 # https://github.com/asdf-community/asdf-hashicorp.git
 golang 1.20.5 # https://github.com/kennyp/asdf-golang.git
-nodejs 18.19.1
+nodejs 18.20.4
