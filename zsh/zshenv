@@ -1,3 +1,6 @@
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
 # GPG signing of commits - necessary for GPG to open passphrase prompt during
 # signing
 export GPG_TTY="$(tty)"
@@ -6,32 +9,30 @@ export GPG_TTY="$(tty)"
 # oh-my-zsh will enable this by default annoyingly
 export ZSH_DISABLE_COMPFIX=true
 
-export AWS_DEFAULT_REGION='us-east-1'
-
-# enabling this was causing issues with saml2aws login: source profile not 
-# having credentials or something to that affect... not totally sure. This
-# being disabled will likely cause issues later
-#export AWS_SDK_LOAD_CONFIG=1
-export AWS_DEFAULT_PROFILE=jupiterone-dev
-export SAML2AWS_PROFILE=jupiterone
+#export AWS_DEFAULT_REGION='us-east-1'
+export AWS_DEFAULT_PROFILE='fusion-dev-admin'
+export AWS_PROFILE='fusion-dev-admin'
 
 # https://github.com/kennyp/asdf-golang#version-selection
-export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+#export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
 # TODO: linux support
 export PATH=${PATH}:/opt/homebrew/bin
-. "$(brew --prefix asdf)/libexec/asdf.sh"
+#. "$(brew --prefix asdf)/libexec/asdf.sh"
 export PATH="$(go env GOPATH)/bin:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
 # breaks asdf?
 export PATH="$PATH:$(yarn global bin)"
 
+#echo zshenv: $PATH
+
+
 export ANDROID_HOME=${HOME}/android-sdk
-export PATH=${PATH}:${ANDROID_HOME}/emulator
-export PATH=${PATH}:${ANDROID_HOME}/tools
-export PATH=${PATH}:${ANDROID_HOME}/tools/bin
-export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+#export PATH=${PATH}:${ANDROID_HOME}/emulator
+#export PATH=${PATH}:${ANDROID_HOME}/tools
+#export PATH=${PATH}:${ANDROID_HOME}/tools/bin
+#export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 
 # needed for rootless
 # https://docs.docker.com/engine/security/rootless/
@@ -57,3 +58,4 @@ export EDITOR=/opt/homebrew/bin/nvim
 export HUSKY=1
 
 export AWS_PAGER=""
+export AWS_REGION="us-gov-west-1"

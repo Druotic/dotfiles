@@ -1,23 +1,44 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$(pyenv init --path)"
+
+# Load environment variables from .env.defaults (committed to repo)
+# and optionally from .env (local overrides, gitignored)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/.env.defaults" ]]; then
+  source "$SCRIPT_DIR/.env.defaults"
+fi
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  source "$SCRIPT_DIR/.env"
+fi
 
 # pre-load for antidote/zsh plugin management
 autoload -Uz compinit
 compinit
 
+alias an="av next"
+alias ap="av prev"
+
+#alias date=gdate
+alias python=python3
+alias "gtc"="git commit --no-verify"
 alias git-recent="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias git-rm-remote-tag="git push --delete origin"
 
 alias jsonFileToEscapedString="node -e \"require('assert')(process.argv[1]); const file = require(process.argv[1]); console.log(JSON.stringify(JSON.stringify(file)))\""
 alias untgz='tar -xvzf'
 
-alias fuckYarn="sed -i '' s/registry.yarnpkg.com/registry.npmjs.org/g"
+alias fuckYarn="sed -i '' 's/registry.yarnpkg.com/registry.npmjs.org/g'"
 alias commitFuckYarn="git commit -am \"s/registry.yarnpkg.com.com/registry.npmjs.org/g yarn.lock\""
 
-alias cdj='cd ~/repos/JupiterOne/'
+alias cds="cd ~/repos/$COMPANY/"
 alias cdp='cd ~/repos/public/'
 alias cdd='cd ~/repos/public/dotfiles/'
-alias cdq='cd ~/repos/JupiterOne/query-language/'
-alias cdc='cd $(ls -d ~/repos/JupiterOne-clone-* | sort | tail -n 1); cd JupiterOne'
+alias cdf="cd ~/repos/$COMPANY/$PATH_TO_MAIN_SERVICE"
+
+cdc () {
+    cd "$(ls -d ~/repos/$COMPANY-clone-* | sort | tail -n 1)" && cd "$COMPANY/$PATH_TO_MAIN_SERVICE"
+}
+
 alias zshrc='vim ~/repos/public/dotfiles/zsh/zshrc'
 alias gitsb='git checkout main && git pull origin main && git checkout - && git merge main && git push origin'
 
@@ -61,9 +82,9 @@ ds () {
     docker rm "${CONTAINERS[@]}"
   fi
 
-  if  [[ "$FLAG" == '--remove' ]]; then
+  if  [[ "$FLAG" == '--prune' ]]; then
     docker system prune --volumes -a
-    #colima restart --force
+    docker volume rm $(docker volume ls -q)
   fi
 }
 
@@ -74,13 +95,23 @@ dockerPrune () {
 }
 
 clone-org-gh-repos () {
-  local clone_dir="JupiterOne-clone-$(date '+%Y-%m-%d_%H.%M.%S')"
+  local clone_dir="$COMPANY-clone-$(date '+%Y-%m-%d_%H.%M.%S')"
   pushd ~/repos
   mkdir $clone_dir
   pushd $clone_dir
-  gh repo list JupiterOne --limit 1000 | while read -r repo _; do
+  gh repo list $COMPANY --limit 1000 | while read -r repo _; do
     gh repo clone "$repo" "$repo"
   done
+  popd
+  popd
+}
+
+clone-org-gh-fusion () {
+  local clone_dir="$COMPANY-clone-$(date '+%Y-%m-%d_%H.%M.%S')"
+  pushd ~/repos
+  mkdir $clone_dir
+  pushd $clone_dir
+  gh repo clone "$COMPANY/$DEFAULT_REPO_NAME" "$COMPANY/$DEFAULT_REPO_NAME"
   popd
   popd
 }
@@ -217,6 +248,9 @@ bindkey "^R" history-incremental-search-backward
 # load zsh lplugins (~/.zsh_plugins.txt)
 source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
 antidote load
+
+# useful for heavy i/o, file watching, etc running in parallel
+ulimit -n 65536
 
 if [[ "$(uname)" = 'Linux' ]]; then
   # linux uses portable appimage

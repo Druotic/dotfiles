@@ -19,10 +19,10 @@ map('i', '<CR>', 'coc#pum#visible() ? coc#pum#confirm() : "\\<CR>"', { expr = tr
 map('n', '[c', '<Plug>(coc-diagnostic-prev)')
 map('n', ']c', '<Plug>(coc-diagnostic-next)')
 
-map('n', 'gd', '<Plug>(coc-definition)')
-map('n', 'gy', '<Plug>(coc-type-definition)')
-map('n', 'gi', '<Plug>(coc-implementation)')
-map('n', 'gr', '<Plug>(coc-references)')
+map('n', 'gd', '<Plug>(coc-definition)', { noremap=false })
+map('n', 'gy', '<Plug>(coc-type-definition)', { noremap=false})
+map('n', 'gi', '<Plug>(coc-implementation)', {noremap=false})
+map('n', 'gr', '<Plug>(coc-references)', {noremap=false})
 
 map('n', '<leader>rn', '<Plug>(coc-rename)')
 
@@ -30,8 +30,8 @@ map('n', '<leader>rn', '<Plug>(coc-rename)')
 -- Vanilla Neovim
 -----------------------------------------------------------
 
-map('v', '<leader>j', ':!python -m json.tool <enter>')
-map('v', '<leader>jc', ':!python -m json.tool --compact<enter>')
+map('v', '<leader>j', ':!python3 -m json.tool <enter>')
+map('v', '<leader>jc', ':!python3 -m json.tool --compact<enter>')
 
 -----------------------------------------------------------
 -- Plugins
